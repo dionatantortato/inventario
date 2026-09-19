@@ -427,11 +427,11 @@ footer{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-si
   <!-- ================= FILTROS GLOBAIS ================= -->
   <div class="filters-bar">
     <div class="view-toggle">
-      <button id="btnModoMensal" class="active">Mensal</button>
-      <button id="btnModoAcumulado">Acumulado (Jan–mês)</button>
+      <button id="btnModoMensal">Mensal</button>
+      <button id="btnModoAcumulado" class="active">Acumulado (Jan–mês)</button>
     </div>
     <div class="filter-group"><label>Ano</label><select id="filtroAno"></select></div>
-    <div class="filter-group" id="filtroMesWrap"><label>Mês</label><select id="filtroMes"></select></div>
+    <div class="filter-group" id="filtroMesWrap" style="display:none"><label>Mês</label><select id="filtroMes"></select></div>
     <div class="filter-group"><label>Unidade</label>
       <div class="ms-dropdown" id="msUnidade">
         <button type="button" class="ms-trigger" id="msUnidadeTrigger">🏢 Visão Corporativa (todas)</button>
@@ -1399,7 +1399,7 @@ const Filters = (() => {
   const state = {
     ano: null,
     mes: null,          // usado quando modoPeriodo === 'mensal'
-    modoPeriodo: 'mensal', // 'mensal' | 'acumulado' (Jan até o mês selecionado)
+    modoPeriodo: 'acumulado', // 'mensal' | 'acumulado' (Jan até o mês selecionado) — padrão: acumulado desde janeiro
     // Fase 36: Unidade, Cliente e Tipo de Processo passaram de seleção única para
     // multi-seleção ("flegar" mais de um valor por filtro, via dropdown com
     // checkboxes) — cada um guarda um Set com os valores marcados. Set vazio em

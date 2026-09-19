@@ -444,11 +444,11 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
   <!-- ================= FILTROS GLOBAIS ================= -->
   <div class="filters-bar">
     <div class="view-toggle">
-      <button id="btnModoMensal" class="active">Mensal</button>
-      <button id="btnModoAcumulado">Acumulado (Jan–mês)</button>
+      <button id="btnModoMensal">Mensal</button>
+      <button id="btnModoAcumulado" class="active">Acumulado (Jan–mês)</button>
     </div>
     <div class="filter-group"><label>Ano</label><select id="filtroAno"></select></div>
-    <div class="filter-group" id="filtroMesWrap"><label>Mês</label><select id="filtroMes"></select></div>
+    <div class="filter-group" id="filtroMesWrap" style="display:none"><label>Mês</label><select id="filtroMes"></select></div>
     <div class="filter-group" style="display:none;"><label>Unidade</label><select id="filtroUnidade"></select></div>
     <div class="filter-group"><label>Cliente</label>
       <div class="ms-dropdown" id="msCliente">
@@ -1401,7 +1401,7 @@ const Filters = (() => {
   const state = {
     ano: null,
     mes: null,          // usado quando modoPeriodo === 'mensal'
-    modoPeriodo: 'mensal', // 'mensal' | 'acumulado' (Jan até o mês selecionado)
+    modoPeriodo: 'acumulado', // 'mensal' | 'acumulado' (Jan até o mês selecionado) — padrão: acumulado desde janeiro
     unidade: 'CLG', // Fase 32: portal individual travado na unidade CLG (sem Visão Corporativa)
     // Fase 48: Cliente e Tipo de Processo passaram de seleção única para multi-seleção
     // ("flegar" mais de um valor por filtro, via dropdown com checkboxes, igual ao portal

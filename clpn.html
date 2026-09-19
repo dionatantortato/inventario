@@ -179,6 +179,7 @@ h1 span{color:var(--muted);font-weight:400;}
 .docas{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;}
 #flashKpiGrid{grid-template-columns:repeat(7,1fr);}
 .charts-row.flash-donut-row{grid-template-columns:1fr 1fr;}
+.charts-row.exec-acc-row{grid-template-columns:1fr 1.6fr;}
 .doca{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;position:relative;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04);}
 .doca::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
 .doca.ok::before{background:var(--green);} .doca.alerta::before{background:var(--yellow);} .doca.critico::before{background:var(--red);} .doca.semdado::before{background:var(--steel);}
@@ -311,6 +312,7 @@ footer{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-si
   .hero{grid-template-columns:repeat(2,1fr);} .hero-main{grid-column:1/-1;}
   .charts-row{grid-template-columns:1fr;}
   .charts-row.flash-donut-row{grid-template-columns:1fr;}
+  .charts-row.exec-acc-row{grid-template-columns:1fr;}
   .donut-grid{grid-template-columns:repeat(3,1fr);}
   #execKpiGrid{grid-template-columns:repeat(3,1fr);}
   .gauge-grid{grid-template-columns:repeat(2,1fr);}
@@ -442,11 +444,11 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
   <!-- ================= FILTROS GLOBAIS ================= -->
   <div class="filters-bar">
     <div class="view-toggle">
-      <button id="btnModoMensal" class="active">Mensal</button>
-      <button id="btnModoAcumulado">Acumulado (Jan–mês)</button>
+      <button id="btnModoMensal">Mensal</button>
+      <button id="btnModoAcumulado" class="active">Acumulado (Jan–mês)</button>
     </div>
     <div class="filter-group"><label>Ano</label><select id="filtroAno"></select></div>
-    <div class="filter-group" id="filtroMesWrap"><label>Mês</label><select id="filtroMes"></select></div>
+    <div class="filter-group" id="filtroMesWrap" style="display:none"><label>Mês</label><select id="filtroMes"></select></div>
     <div class="filter-group" style="display:none;"><label>Unidade</label><select id="filtroUnidade"></select></div>
     <div class="filter-group"><label>Cliente</label>
       <div class="ms-dropdown" id="msCliente">
@@ -468,10 +470,10 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
     <div class="page-header"><div><h1>Visão Executiva <span id="execPeriodo">/ —</span></h1></div></div>
 
     <div class="section-title"><span class="tag">ACURACIDADE</span><h2>Gráficos de Rosca — Unidade</h2><div class="rule"></div></div>
-    <div class="donut-grid" id="execDonutGridTop"></div>
-
-    <div class="section-title"><span class="tag">EXECUTIVO</span><h2>Indicadores Corporativos</h2><div class="rule"></div></div>
-    <div class="docas" id="execKpiGrid"></div>
+    <div class="charts-row exec-acc-row">
+      <div class="panel"><h3>Acuracidade</h3><div class="donut-grid" id="execDonutGridTop" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));"></div></div>
+      <div class="panel"><h3>Indicadores Corporativos</h3><div class="docas" id="execKpiGrid"></div></div>
+    </div>
 
     <div class="section-title"><span class="tag">FINANCEIRO</span><h2>Custo de Estoque e Divergências</h2><span style="font-family:Arial,sans-serif;font-size:10.5px;color:var(--muted);">Ocupação de Estoque Geral, data-base 31/08/2026 — valores proporcionais por UArm</span><div class="rule"></div></div>
     <div class="docas" id="execCustoKpiGrid"></div>
@@ -1399,7 +1401,7 @@ const Filters = (() => {
   const state = {
     ano: null,
     mes: null,          // usado quando modoPeriodo === 'mensal'
-    modoPeriodo: 'mensal', // 'mensal' | 'acumulado' (Jan até o mês selecionado)
+    modoPeriodo: 'acumulado', // 'mensal' | 'acumulado' (Jan até o mês selecionado) — padrão: acumulado desde janeiro
     unidade: 'CLPN', // Fase 32: portal individual travado na unidade CLPN (sem Visão Corporativa)
     // Fase 48: Cliente e Tipo de Processo passaram de seleção única para multi-seleção
     // ("flegar" mais de um valor por filtro, via dropdown com checkboxes, igual ao portal

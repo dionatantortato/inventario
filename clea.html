@@ -422,13 +422,13 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
         <div id="flashExportMenu" class="export-menu" hidden>
           <button type="button" class="export-menu-item" id="flashMenuItemPdf">📄 Exportar PDF</button>
           <button type="button" class="export-menu-item" id="flashMenuItemPng">🖼️ Exportar PNG</button>
+          <button type="button" class="export-menu-item" id="flashMenuItemHtml">🌐 Exportar HTML</button>
         </div>
       </div>
     </div>
 
     <div id="sideImportPanel" style="margin-top:10px;padding-top:14px;border-top:1px dashed var(--line);">
       <div style="font-family:Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:.04em;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">⬆ Atualizar Dados</div>
-      <div style="font-size:10.5px;color:var(--muted);margin-bottom:8px;line-height:1.4;">Importe o Inventory_Control.xlsx do fechamento mais recente para atualizar este portal (processado no navegador — nada é enviado para fora).</div>
       <select id="importUnidadeSel" style="width:100%;margin-bottom:6px;font-size:11px;padding:4px;"></select>
       <input type="file" id="importFileInput" accept=".xlsx" style="width:100%;font-size:10px;margin-bottom:6px;">
       <select id="importPeriodoSel" style="width:100%;margin-bottom:6px;font-size:11px;padding:4px;display:none;"></select>
@@ -796,7 +796,7 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
 
 <!-- ================= SCRIPTS (ordem importa: config -> serviços -> visão) ================= -->
 <script>
-window.__INLINE_PORTAL_DATA__ = {"ultimaAtualizacao":"2026-09-15T20:10:16.649235","fonte":"recalculado_a_partir_dos_xlsx_finais_2026-09-08","metas":{"acuracidade":99.5,"coberturaUArm":70,"coberturaEndereco":70,"coberturaPN":70,"backlog":0,"pctRocVencidosMax":30,"agingMedioMaxDias":60},"unidades":[{"codigo":"CLEA","nome":"CLEA","arquivoOrigem":"CLEA - Inventory Control.xlsx"}],"periodos":{"anosDisponiveis":[2026],"mesesDisponiveis":[8],"mesReferencia":8,"anoReferencia":2026},"indicadores":[],"saldoAberto":{"CLEA":{"nf":{"qtd":0,"val":0,"client":null},"sob":{"qtd":0,"val":0},"porCliente":[]}},"rocTotal":{"CLEA":{"open":1,"closed":0}},"detalhePorCliente":[],"extratoHistorico":[],"topEnderecos":{"CLEA":[]},"saldoOficialAuth":{"naoFisicos":{"AMCOR":[0,4036.82,0,0,4036.82,8611.46,0.0],"ARAUCO":[0,0,0,0,0,0,0],"ASIBRAS":[0,0,0,0,0,16035.38,16035.38],"BOTICARIO":[64664.86,78332.36,78332.36,122903.85,135340.81,467690.66,133419.0],"BRF":[0,0,0,0,0,0,0],"CASA FLORA":[0,0,0,0,0,0,0.0],"CLEAR CORRECT":[0,0,0,0,0,0,0],"COMPAGAS":[27534.44,27534.44,27534.44,47223.51,47223.51,478451.05,488145.19],"COOPERMAX":[85.12,291.74,291.74,2671.32,2671.32,2671.32,2671.32],"DAF":[629823.17,657314.64,670174.3,1260836.69,1439426.22,1615954.05,2484721.27],"DATAMARS":[0,0,0,0,0,0,0],"DONATTI":[0,0,0,0,0,0,0],"G RACING":[0,0,0,0,0,0,0],"ITALTEL":[0,0,5958.7,5958.7,5958.7,5958.7,5958.7],"LIGGA TELECOMUNICACOES":[1634764.94,1634764.94,1634764.94,1653310.48,1653310.48,3753050.13,2303607.89],"METALLOYS":[0,0,0,0,0,0,0],"NEODENT":[0,11340.0,11340.0,17939.9,17939.9,17939.9,29709.02],"NEODENT BARRA":[0,0,0,0,0,173291.15,0.0],"NOVOZYMES":[0,0,0,0,0,0,0],"OMYA":[431.49,431.49,431.49,2089.19,2089.19,2089.19,2089.19],"PACCAR":[432.2,432.2,1288.76,1288.76,1318.76,1318.76,1318.76],"SCHEM":[0,0,0,0,0,0,0],"SP SUMARÉ":[0,0,0,0,0,0,245.54],"SULGAS":[0,0,5737.81,5737.81,5737.81,8200.33,0.0],"SYSMEX":[0,0,0,0,0,0,0]},"sobrantes":{"AMCOR":[0,0,0,0,0,10314.68,0.0],"ARAUCO":[0,0,0,0,0,0,0],"ASIBRAS":[0,0,0,0,0,33048.23,29529.15],"BOTICARIO":[0,0,19455.0,21951.0,21951.0,348260.0,106004.38],"BRF":[0,0,0,0,0,0,0],"CASA FLORA":[0,0,0,0,0,0,1576.67],"CLEAR CORRECT":[0,0,0,0,0,0,0],"COMPAGAS":[478697.46,478697.46,478697.46,498208.13,498208.13,498208.13,499641.93],"COOPERMAX":[0,0,0,156.28,156.28,156.28,410.95],"DAF":[636948.91,647254.83,655063.82,682912.28,682912.28,477733.54,542235.34],"DATAMARS":[0,0,0,0,0,0,0],"DONATTI":[0,0,0,0,0,0,0],"G RACING":[0,0,0,0,0,0,0],"ITALTEL":[93.1,93.1,93.1,93.1,93.1,93.1,93.1],"LIGGA TELECOMUNICACOES":[99158.42,99158.42,103967.78,226287.2,226287.2,765311.12,767274.86],"METALLOYS":[0,0,0,0,0,0,0],"NEODENT":[0,0,0,0,0,0,4517.28],"NEODENT BARRA":[0,0,0,0,0,0,64045.06],"NOVOZYMES":[0,0,0,0,0,0,0],"OMYA":[0,0,0,0,0,0,0.0],"PACCAR":[0,22.63,22.63,22.63,22.63,22.63,22.63],"SCHEM":[0,0,0,0,0,0,0],"SP SUMARÉ":[0,0,0,0,0,0,0.0],"SULGAS":[0,0,228.47,228.47,228.47,205.57,0.0],"SYSMEX":[0,0,0,0,0,0,0]},"clientUnit":{"AMCOR":"CLPN","ARAUCO":"CLP","BOTICARIO":"CLPN","BRF":"CLPN","CASA FLORA":"CLP2","CLEAR CORRECT":"CLP","COOPERMAX":"CLP","DAF":"CLPG","DATAMARS":"CLG","DONATTI":"CLPN","G RACING":"CLP","ITALTEL":"CLP","LIGGA TELECOMUNICACOES":"CLPN","METALLOYS":"CLG","NEODENT":"CLP","NEODENT BARRA":"CLP2","NOVOZYMES":"CLP","OMYA":"CLP","PACCAR":"CLPG","SCHEM":"CLP","SP SUMARÉ":"CLG","SULGAS":"CLG","SYSMEX":"CLP2"},"sharedClients":["ASIBRAS","COMPAGAS"],"valorEstoque":[644588450.88,644886025.05,558978383.02,465147018.6,817184378.81,650337883.76,628613434.2]},"rocAging":{"CLEA":{"aging":{"d0_7":1,"d8_15":0,"d16_30":0,"d31_60":0,"d60mais":0},"top":[{"cliente":"Metalloys","descricao":"Desvio Faltante Externo","armazem":"CLEA","dataAbertura":"26/08/2026","idadeDias":5}]}},"statusFontes":[{"unidade":"CLEA","arquivo":"CLEA - Inventory Control.xlsx","status":"ok","registros":0,"ultimaAtualizacao":"2026-09-15T20:10:16.649Z","erros":[]}],"layoutUnidades":{"dataBase":"31/08/2026","resumoOcupacao":[{"unidade":"CLEA","qtdePNs":326,"qtdeEmbalUArm":326,"saldoEstoque":351000,"valor":2327081.36,"posicoesOcupadas":56,"naoFisicoQtd":0,"naoFisicoValor":0,"desvioExternoQtd":0,"desvioExternoValor":0,"nClientes":2}],"ruas":{},"unidadesComDadosDeRua":[],"unidadesPendentes":[],"metodologia":"CLP: acuracidade por rua recalculada a partir do log de bipagem física por posição (arquivo BIPAGEM_CLP1.xlsx, 6 OSs de agosto/2026) — CHECK_POSICAO OK/DIVERGENTE (ou QUANTIDADEACURADA SIM/NÃO na aba de contagem estatística) por linha bipada; posições ocupadas e valor em estoque por rua a partir da coluna Localização da Ocupação de Estoque Geral (31.08.2026); cobertura = posições distintas bipadas / posições ocupadas. CLPN e CLP2: mesma lógica — acuracidade, linhas bipadas e divergências a partir do log de bipagem física por posição (arquivos BIPAGEM_CLPN.xlsx e BIPAGEM_CLP2.xlsx, CHECK.END Ok/NOk por linha, rua extraída do endereço de inventário END.INVENT.), e posições ocupadas e valor em estoque por rua a partir da coluna Endereço da Ocupação de Estoque Geral (mesmo arquivo e mesma lógica usada para CLP, cruzando pela rua do endereço). Em CLPN, endereços fora do padrão de rua numerada (recebimento, mezanino, áreas externas, anomalias, aguardando endereçamento etc.) entram agrupados em \"Outros\". Em CLP2, endereços fora do padrão Rua/Posição (blocos e áreas de cantina) entram agrupados em \"Outros (Bloco/Cantina)\". Quando uma rua aparece em apenas uma das duas fontes, o indicador da fonte ausente é exibido como \"—\". CLPG e CLG: aguardando arquivo de bipagem física por posição equivalente para destravar a acuracidade por rua; o resumo de ocupação (posições, PN, valor) já está disponível para todas a partir da Ocupação de Estoque Geral."},"ocupacaoPorCliente":{},"porTipoProcesso":{"CLEA":{}},"rocPorCliente":{"CLEA":[{"cliente":"Metalloys","abertas":1,"idadeMediaDias":5,"idadeMaxDias":5,"abertasMes":1,"fechadasMes":0,"total":1}]},"flashSemanal":{"CLEA":{"ano":2026,"semanas":[{"semana":35,"inicio":"2026-08-23","fim":"2026-08-29","periodo":"23/08/2026 a 29/08/2026","mes":"agosto","processos":0,"enderecosInventariados":0,"bipados":0,"divergencias":0,"acuracidadeCard":0.0,"naoFisicosRS":0,"sobrasRS":0,"divTipo":{"endereco":0,"sobras":0.0,"naoFisicos":0.0,"outras":0.0},"diario":[{"data":"2026-08-23","dia":"Domingo","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-08-24","dia":"Segunda","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-08-25","dia":"Terça","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-08-26","dia":"Quarta","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-08-27","dia":"Quinta","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-08-28","dia":"Sexta","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-08-29","dia":"Sábado","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0}],"rocInterna":0,"rocExterna":1,"rocInternaAbertas":0,"rocInternaFechadas":0,"rocExternaAbertas":1,"rocExternaFechadas":0,"rocDetalhe":[{"numero":"2026/8-26331","cliente":"Metalloys","tipo":"Externa","status":"Aberta"}],"capacidade":{"uarm":326.0,"enderecos":56.0,"valor":351000.0,"data":"2026-08-31"},"temDados":true,"controladores":[],"porCliente":[]},{"semana":37,"inicio":"2026-09-06","fim":"2026-09-12","periodo":"06/09/2026 a 12/09/2026","mes":"setembro","processos":0,"enderecosInventariados":0,"bipados":0,"divergencias":0,"acuracidadeCard":0.0,"naoFisicosRS":0,"sobrasRS":0,"divTipo":{"endereco":0,"sobras":0.0,"naoFisicos":0.0,"outras":0.0},"diario":[{"data":"2026-09-06","dia":"Domingo","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-09-07","dia":"Segunda","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-09-08","dia":"Terça","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-09-09","dia":"Quarta","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-09-10","dia":"Quinta","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-09-11","dia":"Sexta","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-09-12","dia":"Sábado","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0}],"rocInterna":0,"rocExterna":1,"rocInternaAbertas":0,"rocInternaFechadas":0,"rocExternaAbertas":1,"rocExternaFechadas":2,"rocDetalhe":[{"numero":"2026/9-26487","cliente":"Metalloys","tipo":"Externa","status":"Aberta"},{"numero":"2026/8-26331","cliente":"Metalloys","tipo":"Externa","status":"Fechada"},{"numero":"2026/9-26487","cliente":"Metalloys","tipo":"Externa","status":"Fechada"}],"capacidade":{"uarm":326.0,"enderecos":56.0,"valor":351000.0,"data":"2026-09-01"},"temDados":true,"controladores":[],"porCliente":[]},{"semana":38,"inicio":"2026-09-13","fim":"2026-09-19","periodo":"13/09/2026 a 19/09/2026","mes":"setembro","processos":3,"enderecosInventariados":6.0,"bipados":62.0,"divergencias":0.0,"acuracidadeCard":1.0,"naoFisicosRS":0,"sobrasRS":0,"divTipo":{"endereco":0.0,"sobras":0.0,"naoFisicos":0.0,"outras":0.0},"diario":[{"data":"2026-09-13","dia":"Domingo","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-09-14","dia":"Segunda","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-09-15","dia":"Terça","processos":3,"divergencias":0.0,"enderecos":6.0,"acuracidade":1.0},{"data":"2026-09-16","dia":"Quarta","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-09-17","dia":"Quinta","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-09-18","dia":"Sexta","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-09-19","dia":"Sábado","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0}],"rocInterna":0,"rocExterna":0,"rocInternaAbertas":0,"rocInternaFechadas":0,"rocExternaAbertas":0,"rocExternaFechadas":0,"rocDetalhe":[],"capacidade":{"uarm":706.0,"enderecos":101.0,"valor":5117826.09,"data":"2026-09-15"},"temDados":true,"controladores":[{"nome":"Mariana Gomes","unidade":"CLEA","bipados":62.0,"divergencias":0.0,"acuracidade":1.0}],"porCliente":[{"cliente":"Metalloys","processos":2,"enderecosInventariados":4.0,"bipados":34.0,"naoFisicos":0.0,"sobras":0.0,"desviosEndereco":0.0,"outrasDivergencias":0.0,"divergencias":0.0,"acuracidade":1.0},{"cliente":"S Chem","processos":1,"enderecosInventariados":2.0,"bipados":28.0,"naoFisicos":0.0,"sobras":0.0,"desviosEndereco":0.0,"outrasDivergencias":0.0,"divergencias":0.0,"acuracidade":1.0}]}]}}};
+window.__INLINE_PORTAL_DATA__ = {"ultimaAtualizacao":"2026-09-19T11:58:56.353594","fonte":"recalculado_a_partir_dos_xlsx_finais_2026-09-08","metas":{"acuracidade":99.5,"coberturaUArm":70,"coberturaEndereco":70,"coberturaPN":70,"backlog":0,"pctRocVencidosMax":30,"agingMedioMaxDias":60},"unidades":[{"codigo":"CLEA","nome":"CLEA","arquivoOrigem":"CLEA - Inventory Control.xlsx"}],"periodos":{"anosDisponiveis":[2026],"mesesDisponiveis":[9],"mesReferencia":9,"anoReferencia":2026},"indicadores":[{"unidade":"CLEA","ano":2026,"mes":9,"mesNome":"Setembro","acuracidade":100,"metaAcuracidade":99.5,"uarmAuditadas":411,"uarmTotal":null,"enderecosAuditados":36,"enderecosTotal":null,"pnAuditados":null,"pnTotal":null,"divergencias":0,"sobras":0,"naoFisicos":0,"desviosEndereco":0,"outrasDivergencias":0,"valorEstoque":null,"custoNaoFisicos":0,"custoSobras":0,"custoTotalDivergencias":0,"processos":5,"diasTrabalhados":3,"mediaUArmDia":137,"mediaEndDia":12,"clientes":{"S Chem":{"end":0,"out":0,"nf":0,"sob":0,"bip":28,"acc":100},"Metalloys":{"end":0,"out":0,"nf":0,"sob":0,"bip":273,"acc":100},"Endereço":{"end":0,"out":0,"nf":0,"sob":0,"bip":110,"acc":100}},"controladores":[{"name":"Mariana Gomes","bip":411,"div":0,"acc":100}],"osAbertasMes":1,"osConcluidasMes":2,"osBacklogAtual":0,"osVencidas15d":0,"osIdadeMediaDias":0}],"saldoAberto":{"CLEA":{"nf":{"qtd":0,"val":0,"client":null},"sob":{"qtd":0,"val":0},"porCliente":[]}},"rocTotal":{"CLEA":{"open":0,"closed":2}},"detalhePorCliente":[{"unidade":"CLEA","cliente":"S Chem","tipoProcesso":"Cíclico","ano":2026,"mes":9,"mesNome":"Setembro","processos":1,"naoFisicos":0,"sobras":0,"desviosEndereco":0,"outrasDivergencias":0,"acuracidade":100,"tempoBipagemMin":48,"tempoAjustesMin":5,"tempoTotalMin":53,"enderecos":2,"bipados":28},{"unidade":"CLEA","cliente":"Metalloys","tipoProcesso":"Cíclico","ano":2026,"mes":9,"mesNome":"Setembro","processos":3,"naoFisicos":0,"sobras":0,"desviosEndereco":0,"outrasDivergencias":0,"acuracidade":100,"tempoBipagemMin":65,"tempoAjustesMin":0,"tempoTotalMin":65,"enderecos":34,"bipados":273},{"unidade":"CLEA","cliente":"Endereço","tipoProcesso":"Auditoria","ano":2026,"mes":9,"mesNome":"Setembro","processos":1,"naoFisicos":0,"sobras":0,"desviosEndereco":0,"outrasDivergencias":0,"acuracidade":100,"tempoBipagemMin":1,"tempoAjustesMin":0,"tempoTotalMin":1,"enderecos":0,"bipados":110}],"extratoHistorico":[],"topEnderecos":{"CLEA":[]},"saldoOficialAuth":{"naoFisicos":{"AMCOR":[0,4036.82,0,0,4036.82,8611.46,0.0],"ARAUCO":[0,0,0,0,0,0,0],"ASIBRAS":[0,0,0,0,0,16035.38,16035.38],"BOTICARIO":[64664.86,78332.36,78332.36,122903.85,135340.81,467690.66,133419.0],"BRF":[0,0,0,0,0,0,0],"CASA FLORA":[0,0,0,0,0,0,0.0],"CLEAR CORRECT":[0,0,0,0,0,0,0],"COMPAGAS":[27534.44,27534.44,27534.44,47223.51,47223.51,478451.05,488145.19],"COOPERMAX":[85.12,291.74,291.74,2671.32,2671.32,2671.32,2671.32],"DAF":[629823.17,657314.64,670174.3,1260836.69,1439426.22,1615954.05,2484721.27],"DATAMARS":[0,0,0,0,0,0,0],"DONATTI":[0,0,0,0,0,0,0],"G RACING":[0,0,0,0,0,0,0],"ITALTEL":[0,0,5958.7,5958.7,5958.7,5958.7,5958.7],"LIGGA TELECOMUNICACOES":[1634764.94,1634764.94,1634764.94,1653310.48,1653310.48,3753050.13,2303607.89],"METALLOYS":[0,0,0,0,0,0,0],"NEODENT":[0,11340.0,11340.0,17939.9,17939.9,17939.9,29709.02],"NEODENT BARRA":[0,0,0,0,0,173291.15,0.0],"NOVOZYMES":[0,0,0,0,0,0,0],"OMYA":[431.49,431.49,431.49,2089.19,2089.19,2089.19,2089.19],"PACCAR":[432.2,432.2,1288.76,1288.76,1318.76,1318.76,1318.76],"SCHEM":[0,0,0,0,0,0,0],"SP SUMARÉ":[0,0,0,0,0,0,245.54],"SULGAS":[0,0,5737.81,5737.81,5737.81,8200.33,0.0],"SYSMEX":[0,0,0,0,0,0,0]},"sobrantes":{"AMCOR":[0,0,0,0,0,10314.68,0.0],"ARAUCO":[0,0,0,0,0,0,0],"ASIBRAS":[0,0,0,0,0,33048.23,29529.15],"BOTICARIO":[0,0,19455.0,21951.0,21951.0,348260.0,106004.38],"BRF":[0,0,0,0,0,0,0],"CASA FLORA":[0,0,0,0,0,0,1576.67],"CLEAR CORRECT":[0,0,0,0,0,0,0],"COMPAGAS":[478697.46,478697.46,478697.46,498208.13,498208.13,498208.13,499641.93],"COOPERMAX":[0,0,0,156.28,156.28,156.28,410.95],"DAF":[636948.91,647254.83,655063.82,682912.28,682912.28,477733.54,542235.34],"DATAMARS":[0,0,0,0,0,0,0],"DONATTI":[0,0,0,0,0,0,0],"G RACING":[0,0,0,0,0,0,0],"ITALTEL":[93.1,93.1,93.1,93.1,93.1,93.1,93.1],"LIGGA TELECOMUNICACOES":[99158.42,99158.42,103967.78,226287.2,226287.2,765311.12,767274.86],"METALLOYS":[0,0,0,0,0,0,0],"NEODENT":[0,0,0,0,0,0,4517.28],"NEODENT BARRA":[0,0,0,0,0,0,64045.06],"NOVOZYMES":[0,0,0,0,0,0,0],"OMYA":[0,0,0,0,0,0,0.0],"PACCAR":[0,22.63,22.63,22.63,22.63,22.63,22.63],"SCHEM":[0,0,0,0,0,0,0],"SP SUMARÉ":[0,0,0,0,0,0,0.0],"SULGAS":[0,0,228.47,228.47,228.47,205.57,0.0],"SYSMEX":[0,0,0,0,0,0,0]},"clientUnit":{"AMCOR":"CLPN","ARAUCO":"CLP","BOTICARIO":"CLPN","BRF":"CLPN","CASA FLORA":"CLP2","CLEAR CORRECT":"CLP","COOPERMAX":"CLP","DAF":"CLPG","DATAMARS":"CLG","DONATTI":"CLPN","G RACING":"CLP","ITALTEL":"CLP","LIGGA TELECOMUNICACOES":"CLPN","METALLOYS":"CLG","NEODENT":"CLP","NEODENT BARRA":"CLP2","NOVOZYMES":"CLP","OMYA":"CLP","PACCAR":"CLPG","SCHEM":"CLP","SP SUMARÉ":"CLG","SULGAS":"CLG","SYSMEX":"CLP2"},"sharedClients":["ASIBRAS","COMPAGAS"],"valorEstoque":[644588450.88,644886025.05,558978383.02,465147018.6,817184378.81,650337883.76,628613434.2]},"rocAging":{"CLEA":{"aging":{"d0_7":0,"d8_15":0,"d16_30":0,"d31_60":0,"d60mais":0},"top":[]}},"statusFontes":[{"unidade":"CLEA","arquivo":"CLEA - Inventory Control.xlsx","status":"ok","registros":5,"ultimaAtualizacao":"2026-09-19T11:58:56.353Z","erros":[]}],"layoutUnidades":{"dataBase":"31/08/2026","resumoOcupacao":[{"unidade":"CLEA","qtdePNs":326,"qtdeEmbalUArm":326,"saldoEstoque":351000,"valor":2327081.36,"posicoesOcupadas":56,"naoFisicoQtd":0,"naoFisicoValor":0,"desvioExternoQtd":0,"desvioExternoValor":0,"nClientes":2}],"ruas":{},"unidadesComDadosDeRua":[],"unidadesPendentes":[],"metodologia":"CLP: acuracidade por rua recalculada a partir do log de bipagem física por posição (arquivo BIPAGEM_CLP1.xlsx, 6 OSs de agosto/2026) — CHECK_POSICAO OK/DIVERGENTE (ou QUANTIDADEACURADA SIM/NÃO na aba de contagem estatística) por linha bipada; posições ocupadas e valor em estoque por rua a partir da coluna Localização da Ocupação de Estoque Geral (31.08.2026); cobertura = posições distintas bipadas / posições ocupadas. CLPN e CLP2: mesma lógica — acuracidade, linhas bipadas e divergências a partir do log de bipagem física por posição (arquivos BIPAGEM_CLPN.xlsx e BIPAGEM_CLP2.xlsx, CHECK.END Ok/NOk por linha, rua extraída do endereço de inventário END.INVENT.), e posições ocupadas e valor em estoque por rua a partir da coluna Endereço da Ocupação de Estoque Geral (mesmo arquivo e mesma lógica usada para CLP, cruzando pela rua do endereço). Em CLPN, endereços fora do padrão de rua numerada (recebimento, mezanino, áreas externas, anomalias, aguardando endereçamento etc.) entram agrupados em \"Outros\". Em CLP2, endereços fora do padrão Rua/Posição (blocos e áreas de cantina) entram agrupados em \"Outros (Bloco/Cantina)\". Quando uma rua aparece em apenas uma das duas fontes, o indicador da fonte ausente é exibido como \"—\". CLPG e CLG: aguardando arquivo de bipagem física por posição equivalente para destravar a acuracidade por rua; o resumo de ocupação (posições, PN, valor) já está disponível para todas a partir da Ocupação de Estoque Geral."},"ocupacaoPorCliente":{},"porTipoProcesso":{"CLEA":{}},"rocPorCliente":{"CLEA":[{"cliente":"Metalloys","abertas":0,"idadeMediaDias":0,"idadeMaxDias":0,"abertasMes":1,"fechadasMes":2,"total":2}]},"flashSemanal":{"CLEA":{"ano":2026,"semanas":[{"semana":35,"inicio":"2026-08-23","fim":"2026-08-29","periodo":"23/08/2026 a 29/08/2026","mes":"agosto","processos":0,"enderecosInventariados":0,"bipados":0,"divergencias":0,"acuracidadeCard":0.0,"naoFisicosRS":0,"sobrasRS":0,"divTipo":{"endereco":0,"sobras":0.0,"naoFisicos":0.0,"outras":0.0},"diario":[{"data":"2026-08-23","dia":"Domingo","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-08-24","dia":"Segunda","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-08-25","dia":"Terça","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-08-26","dia":"Quarta","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-08-27","dia":"Quinta","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-08-28","dia":"Sexta","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-08-29","dia":"Sábado","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0}],"rocInterna":0,"rocExterna":1,"rocInternaAbertas":0,"rocInternaFechadas":0,"rocExternaAbertas":1,"rocExternaFechadas":0,"rocDetalhe":[{"numero":"2026/8-26331","cliente":"Metalloys","tipo":"Externa","status":"Aberta"}],"capacidade":{"uarm":326.0,"enderecos":56.0,"valor":351000.0,"data":"2026-08-31"},"temDados":true,"controladores":[],"porCliente":[]},{"semana":37,"inicio":"2026-09-06","fim":"2026-09-12","periodo":"06/09/2026 a 12/09/2026","mes":"setembro","processos":0,"enderecosInventariados":0,"bipados":0,"divergencias":0,"acuracidadeCard":0.0,"naoFisicosRS":0,"sobrasRS":0,"divTipo":{"endereco":0,"sobras":0.0,"naoFisicos":0.0,"outras":0.0},"diario":[{"data":"2026-09-06","dia":"Domingo","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-09-07","dia":"Segunda","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-09-08","dia":"Terça","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-09-09","dia":"Quarta","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-09-10","dia":"Quinta","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-09-11","dia":"Sexta","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-09-12","dia":"Sábado","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0}],"rocInterna":0,"rocExterna":1,"rocInternaAbertas":0,"rocInternaFechadas":0,"rocExternaAbertas":1,"rocExternaFechadas":2,"rocDetalhe":[{"numero":"2026/9-26487","cliente":"Metalloys","tipo":"Externa","status":"Aberta"},{"numero":"2026/8-26331","cliente":"Metalloys","tipo":"Externa","status":"Fechada"},{"numero":"2026/9-26487","cliente":"Metalloys","tipo":"Externa","status":"Fechada"}],"capacidade":{"uarm":326.0,"enderecos":56.0,"valor":351000.0,"data":"2026-08-31"},"temDados":true,"controladores":[],"porCliente":[]},{"semana":38,"inicio":"2026-09-13","fim":"2026-09-19","periodo":"13/09/2026 a 19/09/2026","mes":"setembro","processos":5,"enderecosInventariados":36.0,"bipados":411.0,"divergencias":0.0,"acuracidadeCard":1.0,"naoFisicosRS":0,"sobrasRS":0,"divTipo":{"endereco":0.0,"sobras":0.0,"naoFisicos":0.0,"outras":0.0},"diario":[{"data":"2026-09-13","dia":"Domingo","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-09-14","dia":"Segunda","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-09-15","dia":"Terça","processos":3,"divergencias":0.0,"enderecos":6.0,"acuracidade":1.0},{"data":"2026-09-16","dia":"Quarta","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0},{"data":"2026-09-17","dia":"Quinta","processos":1,"divergencias":0.0,"enderecos":0.0,"acuracidade":0.0},{"data":"2026-09-18","dia":"Sexta","processos":1,"divergencias":0.0,"enderecos":30.0,"acuracidade":1.0},{"data":"2026-09-19","dia":"Sábado","processos":0,"divergencias":0,"enderecos":0,"acuracidade":0.0}],"rocInterna":0,"rocExterna":0,"rocInternaAbertas":0,"rocInternaFechadas":0,"rocExternaAbertas":0,"rocExternaFechadas":0,"rocDetalhe":[],"capacidade":{"uarm":706.0,"enderecos":101.0,"valor":5117826.09,"data":"2026-09-15"},"temDados":true,"controladores":[{"nome":"Mariana Gomes","unidade":"CLEA","bipados":411.0,"divergencias":0.0,"acuracidade":1.0}],"porCliente":[{"cliente":"Metalloys","processos":3,"enderecosInventariados":34.0,"bipados":273.0,"naoFisicos":0.0,"sobras":0.0,"desviosEndereco":0.0,"outrasDivergencias":0.0,"divergencias":0.0,"acuracidade":1.0},{"cliente":"Endereço","processos":1,"enderecosInventariados":0.0,"bipados":110.0,"naoFisicos":0.0,"sobras":0.0,"desviosEndereco":0.0,"outrasDivergencias":0.0,"divergencias":0.0,"acuracidade":1.0},{"cliente":"S Chem","processos":1,"enderecosInventariados":2.0,"bipados":28.0,"naoFisicos":0.0,"sobras":0.0,"desviosEndereco":0.0,"outrasDivergencias":0.0,"divergencias":0.0,"acuracidade":1.0}]}]}}};
 </script>
 <script>
 /* ============================================================================
@@ -4193,6 +4193,63 @@ const Dashboard = (() => {
     });
   }
 
+  /** Extrato em HTML autônomo: mesmo clone (cabeçalho + Flash) usado no PNG/PDF, mas serializado como documento
+   *  HTML com CSS, cores de tema e gráficos (imagens em alta resolução) embutidos — abre sozinho, fora do portal. */
+  async function flashBuildExportHtmlString() {
+    const header = document.getElementById('topHeader');
+    const flashHeader = document.querySelector('#page-flash .page-header');
+    const content = document.getElementById('flashConteudo');
+    if (!header || !flashHeader || !content) throw new Error('Elementos do Flash Semanal não encontrados.');
+    const wrap = document.createElement('div');
+    wrap.className = 'capture-wrap';
+    const headerClone = header.cloneNode(true);
+    const actions = headerClone.querySelector('.header-actions');
+    if (actions) actions.remove();
+    wrap.appendChild(headerClone);
+    wrap.appendChild(flashHeader.cloneNode(true));
+    wrap.appendChild(content.cloneNode(true));
+    const origCanvases = [header, flashHeader, content].flatMap(el => Array.from(el.querySelectorAll('canvas')));
+    Array.from(wrap.querySelectorAll('canvas')).forEach((c, i) => {
+      const orig = origCanvases[i];
+      if (!orig) { c.remove(); return; }
+      const img = document.createElement('img');
+      img.src = flashCapturarGraficoHiRes(orig, FLASH_EXPORT_SCALE) || orig.toDataURL('image/png');
+      img.style.cssText = 'width:100%;height:auto;display:block;';
+      c.replaceWith(img);
+    });
+    const rootStyle = getComputedStyle(document.documentElement);
+    const varNames = new Set();
+    let cssText = '';
+    for (const sheet of document.styleSheets) {
+      let rules;
+      try { rules = sheet.cssRules; } catch (e) { continue; }
+      if (!rules) continue;
+      for (const rule of rules) {
+        cssText += rule.cssText + '\n';
+        if (!rule.style) continue;
+        for (let i = 0; i < rule.style.length; i++) { const prop = rule.style[i]; if (prop && prop.startsWith('--')) varNames.add(prop); }
+      }
+    }
+    let bakedVars = '';
+    varNames.forEach(v => { bakedVars += `${v}:${rootStyle.getPropertyValue(v)};`; });
+    const tema = document.documentElement.getAttribute('data-theme') || 'light';
+    const bg = rootStyle.getPropertyValue('--bg') || '#fff';
+    const fg = rootStyle.getPropertyValue('--text') || '#141414';
+    wrap.setAttribute('data-theme', tema);
+    wrap.setAttribute('style', bakedVars + `max-width:1200px;margin:0 auto;box-sizing:border-box;background:${bg};color:${fg};font-family:Arial,sans-serif;font-size:12px;padding:24px;`);
+    const titulo = `Flash Semanal — ${flashState.unidade} — Semana ${String(flashState.semana).padStart(2, '0')}/${flashState.ano}`;
+    return '<!DOCTYPE html>\n<html lang="pt-BR" data-theme="' + tema + '"><head><meta charset="utf-8">' +
+      '<meta name="viewport" content="width=device-width,initial-scale=1"><title>' + titulo + '</title>' +
+      '<style>' + cssText + '\nbody{margin:0;background:' + bg + ';}</style></head><body>' + wrap.outerHTML + '</body></html>';
+  }
+
+  async function flashExportHtml() {
+    await flashExportComEstado('Gerando HTML…', async () => {
+      const html = await flashBuildExportHtmlString();
+      flashDownloadBlob(new Blob([html], { type: 'text/html;charset=utf-8' }), flashExportFilename('html'));
+    });
+  }
+
   function flashFecharMenuExtrato() {
     const menu = document.getElementById('flashExportMenu');
     if (menu) menu.hidden = true;
@@ -4207,6 +4264,8 @@ const Dashboard = (() => {
     });
     document.getElementById('flashMenuItemPdf').addEventListener('click', (ev) => { ev.stopPropagation(); flashExportPdf(); });
     document.getElementById('flashMenuItemPng').addEventListener('click', (ev) => { ev.stopPropagation(); flashExportPng(); });
+    const _mh = document.getElementById('flashMenuItemHtml');
+    if (_mh) _mh.addEventListener('click', (ev) => { ev.stopPropagation(); flashExportHtml(); });
     document.addEventListener('click', () => flashFecharMenuExtrato());
     document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') flashFecharMenuExtrato(); });
   }
@@ -4630,10 +4689,29 @@ const Importer = (function () {
     return row[idx];
   }
 
+  /** Some units' Report Diario spells these two headers correctly while others carry
+   * a long-standing typo (documented convention: CLPG uses "Div. Endereço" / "Controlador
+   * resp. contagem"; CLG/CLP/CLP2/CLPN use "Div. Enedereço" / "Controlador resp. conatgem").
+   * Always try every known spelling so extraction doesn't silently zero out a unit whose
+   * workbook happens to spell it correctly. */
+  function getAliased(row, colmap, names) {
+    for (const n of names) {
+      const v = get(row, colmap, n);
+      if (v != null) return v;
+    }
+    return null;
+  }
+  const DIV_ENDERECO_NAMES = ['Div. Enedereço', 'Div. Endereço'];
+  const CONTROLADOR_NAMES = ['Controlador resp. conatgem', 'Controlador resp. contagem'];
+
   function computeMonthAgg(colmap, rows, ano, mesPt) {
-    const mrows = rows.filter(r => get(r, colmap, 'Ano') === ano && trim(get(r, colmap, 'Mês')).toLowerCase() === mesPt);
+    /* Regra (19/09): processo pronto/concluído = linha do Report Diário com KPIs = "OK" (se a coluna existir) */
+    const kpiIdx = colmap['KPIS'];
+    const kpiOk = (r) => kpiIdx == null || trim(r[kpiIdx]).toUpperCase() === 'OK';
+    const mrows = rows.filter(r => get(r, colmap, 'Ano') === ano && trim(get(r, colmap, 'Mês')).toLowerCase() === mesPt && kpiOk(r));
     const s = (field) => mrows.reduce((acc, r) => acc + num(get(r, colmap, field)), 0);
-    const end = s('Div. Enedereço'), out = s('Outras Diverg.'), nf = s('Não Físicos'), sob = s('Sobrantes');
+    const sAliased = (names) => mrows.reduce((acc, r) => acc + num(getAliased(r, colmap, names)), 0);
+    const end = sAliased(DIV_ENDERECO_NAMES), out = s('Outras Diverg.'), nf = s('Não Físicos'), sob = s('Sobrantes');
     const bip = s('Bipados'), endInv = s('Endereços Inventáriados');
     const nfR = round2(s('Não Físicos (R$)')) || 0, sobR = round2(s('Sobrantes (R$)')) || 0;
     const div = end + out + nf + sob;
@@ -4652,7 +4730,7 @@ const Importer = (function () {
       const tipo = trim(get(r, colmap, 'Tipo de Processo')) || 'Não informado';
       if (!percli[c]) percli[c] = { end: 0, out: 0, nf: 0, sob: 0, bip: 0, tempoBip: 0, tempoAdj: 0, end2: 0, processos: 0 };
       const d = percli[c];
-      d.end += num(get(r, colmap, 'Div. Enedereço'));
+      d.end += num(getAliased(r, colmap, DIV_ENDERECO_NAMES));
       d.out += num(get(r, colmap, 'Outras Diverg.'));
       d.nf += num(get(r, colmap, 'Não Físicos'));
       d.sob += num(get(r, colmap, 'Sobrantes'));
@@ -4665,7 +4743,7 @@ const Importer = (function () {
       const chaveTipo = c + '|' + tipo;
       if (!percliTipo[chaveTipo]) percliTipo[chaveTipo] = { cliente: c, tipo, end: 0, out: 0, nf: 0, sob: 0, bip: 0, tempoBip: 0, tempoAdj: 0, end2: 0, processos: 0 };
       const dt = percliTipo[chaveTipo];
-      dt.end += num(get(r, colmap, 'Div. Enedereço'));
+      dt.end += num(getAliased(r, colmap, DIV_ENDERECO_NAMES));
       dt.out += num(get(r, colmap, 'Outras Diverg.'));
       dt.nf += num(get(r, colmap, 'Não Físicos'));
       dt.sob += num(get(r, colmap, 'Sobrantes'));
@@ -4684,11 +4762,11 @@ const Importer = (function () {
 
     const contr = {};
     mrows.forEach(r => {
-      const name = get(r, colmap, 'Controlador resp. conatgem');
+      const name = getAliased(r, colmap, CONTROLADOR_NAMES);
       if (!name) return;
       if (!contr[name]) contr[name] = { bip: 0, div: 0 };
       contr[name].bip += num(get(r, colmap, 'Bipados'));
-      contr[name].div += num(get(r, colmap, 'Div. Enedereço')) + num(get(r, colmap, 'Outras Diverg.')) + num(get(r, colmap, 'Não Físicos')) + num(get(r, colmap, 'Sobrantes'));
+      contr[name].div += num(getAliased(r, colmap, DIV_ENDERECO_NAMES)) + num(get(r, colmap, 'Outras Diverg.')) + num(get(r, colmap, 'Não Físicos')) + num(get(r, colmap, 'Sobrantes'));
     });
     const controladores = Object.keys(contr).map(name => ({ name, bip: contr[name].bip, div: contr[name].div }))
       .sort((a, b) => b.bip - a.bip)
@@ -4703,20 +4781,46 @@ const Importer = (function () {
   }
 
   function getSaldoRowRaw(workbook, mesPt) {
-    const ws = workbook.Sheets['Base de Dados'];
-    if (!ws) throw new Error('Aba "Base de Dados" não encontrada na planilha.');
-    const grid = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null, raw: true });
+    /* Layout novo (2026-09-13+): tabela "Saldo de Ocupação" em aba própria (nome varia por unidade), localizada
+       pelo cabeçalho "Mês"; layout antigo: colunas fixas F:K da aba "Base de Dados". Em meses com mais de uma
+       linha (ex.: 01/09 e 15/09) vale a última com UArm e Valor numéricos. */
+    const normS = (s) => String(s == null ? '' : s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
     let result = { uarmTotal: null, enderecosTotal: null, valorEstoque: null };
-    for (let i = 0; i < Math.min(40, grid.length); i++) {
-      const row = grid[i];
-      const mv = row.length > 6 ? row[6] : null;
-      if (mv != null && trim(mv).toLowerCase() === mesPt) {
-        result = {
-          uarmTotal: row.length > 7 ? row[7] : null,
-          enderecosTotal: row.length > 8 ? row[8] : null,
-          valorEstoque: row.length > 9 ? row[9] : null,
-        };
-        break;
+    const cand = ['ocupacao quinzenal', 'saldo ocupacao', 'saldo de ocupacao', 'base de dados'];
+    const nomes = (workbook.SheetNames || []).slice().sort((a, b) => cand.indexOf(normS(a)) - cand.indexOf(normS(b)));
+    for (const nome of nomes) {
+      if (cand.indexOf(normS(nome)) === -1) continue;
+      const ws = workbook.Sheets[nome];
+      if (!ws) continue;
+      const grid = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null, raw: true });
+      let hRow = -1, hCol = -1;
+      for (let i = 0; i < Math.min(15, grid.length) && hRow < 0; i++) {
+        const row = grid[i] || [];
+        for (let c = 0; c < row.length; c++) {
+          if (normS(row[c]) === 'mes' && normS(row[c + 1]).indexOf('uarm') === 0) { hRow = i; hCol = c; break; }
+        }
+      }
+      if (hRow >= 0) {
+        for (let i = hRow + 1; i < grid.length; i++) {
+          const row = grid[i] || [];
+          if (normS(row[hCol]) !== mesPt) continue;
+          const u = row[hCol + 1], e = row[hCol + 2], v = row[hCol + 3];
+          if (typeof u === 'number' && u > 0 && typeof v === 'number' && v > 0) {
+            result = { uarmTotal: u, enderecosTotal: typeof e === 'number' ? e : null, valorEstoque: v };
+          } else if (result.uarmTotal == null && typeof u === 'number' && u > 0) {
+            result = { uarmTotal: u, enderecosTotal: typeof e === 'number' ? e : null, valorEstoque: typeof v === 'number' ? v : null };
+          }
+        }
+        if (result.uarmTotal != null) return result;
+      }
+      /* layout antigo: colunas fixas */
+      for (let i = 0; i < Math.min(40, grid.length); i++) {
+        const row = grid[i];
+        const mv = row.length > 6 ? row[6] : null;
+        if (mv != null && trim(mv).toLowerCase() === mesPt) {
+          const nn = (v) => (typeof v === 'number' && isFinite(v)) ? v : null;
+          return { uarmTotal: nn(row.length > 7 ? row[7] : null), enderecosTotal: nn(row.length > 8 ? row[8] : null), valorEstoque: nn(row.length > 9 ? row[9] : null) };
+        }
       }
     }
     return result;

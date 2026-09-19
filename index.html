@@ -105,6 +105,11 @@ body{margin:0;background-color:var(--bg);background-image:linear-gradient(rgba(2
 .btn:hover{border-color:var(--yellow);}
 .btn.primary{background:var(--black);color:#fff;border-color:var(--black);}
 .btn.primary:hover{background:#000;}
+.export-menu{position:absolute;right:0;top:calc(100% + 6px);background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.16);min-width:190px;z-index:80;overflow:hidden;}
+.export-menu-item{display:block;width:100%;text-align:left;padding:10px 14px;border:none;background:transparent;color:var(--text);font-family:Arial,sans-serif;font-size:12px;text-transform:none;letter-spacing:normal;cursor:pointer;}
+.export-menu-item:hover{background:var(--bg);}
+.export-menu-item:disabled{opacity:.5;cursor:default;}
+.export-menu-item+.export-menu-item{border-top:1px solid var(--line);}
 
 /* ---------------------------------------------------------------- Sidebar (menu lateral) */
 .app-layout{display:flex;align-items:flex-start;max-width:1520px;margin:0 auto;}
@@ -396,6 +401,14 @@ footer{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-si
       <div class="flash-nav-btns">
         <button id="flashBtnPrevSemana" class="btn" type="button" title="Semana anterior">◀</button>
         <button id="flashBtnNextSemana" class="btn" type="button" title="Próxima semana">▶</button>
+      </div>
+      <div class="filter-group export-menu-wrap" id="flashExportMenuWrap" style="position:relative;">
+        <button id="flashBtnGerarExtrato" class="btn primary" type="button" style="width:100%;" title="Gera um extrato desta página (PNG, PDF ou HTML) para anexar em e-mail ou impressão">📄 Gerar Extrato ▾</button>
+        <div id="flashExportMenu" class="export-menu" hidden>
+          <button type="button" class="export-menu-item" id="flashMenuItemPdf">📄 Exportar PDF</button>
+          <button type="button" class="export-menu-item" id="flashMenuItemPng">🖼️ Exportar PNG</button>
+          <button type="button" class="export-menu-item" id="flashMenuItemHtml">🌐 Exportar HTML</button>
+        </div>
       </div>
     </div>
   
@@ -3905,8 +3918,431 @@ const Dashboard = (() => {
         flashState.semana = Math.min(flashMaxSemana(), flashState.semana + 1);
         renderFlashSemanal();
       });
+      flashWireMenuExtrato();
       flashFiltrosMontados = true;
     }
+  }
+
+  /** ------------------------------------------------------------------
+   * "GERAR EXTRATO" — exporta a página Flash Semanal (cabeçalho + conteúdo,
+   * na semana/unidade selecionadas) como PNG (print profissional, sem
+   * compressão com perdas) ou PDF (mesma proporção vertical do dashboard,
+   * paginado automaticamente em pontos naturais entre seções), preservando
+   * integralmente o padrão visual do dashboard em tela — nada de redesenho.
+   *
+   * Sem biblioteca externa (html2canvas, jsPDF etc. não podem ser embutidos
+   * aqui): o cabeçalho + conteúdo são clonados, cada <canvas> (todos os
+   * gráficos são Chart.js) é RECAPTURADO em alta resolução reaproveitando os
+   * mesmos dados/opções do gráfico ao vivo (ver flashCapturarGraficoHiRes) —
+   * isso corrige o borrão que os gráficos apresentavam no extrato: antes
+   * eram fotografados na resolução 1x da tela e depois esticados para a
+   * escala final, enquanto o resto da página (texto/HTML via foreignObject)
+   * já se adaptava bem. O clone é embrulhado num <svg><foreignObject>,
+   * rasterizado num <canvas> de saída via Image()+data URI (mesma técnica
+   * de sempre) e esse canvas final vira o PNG direto, ou é fatiado em
+   * páginas (nunca no meio de uma seção) e cada fatia entra como imagem
+   * JPEG num PDF montado à mão (stream DCTDecode, sem lib de compressão).
+   * --------------------------------------------------------------------*/
+  const FLASH_EXPORT_SCALE = 2; // 2x a resolução visual (PNG "print profissional" + reamostragem dos gráficos Chart.js na mesma escala, evitando o esticamento borrado de um snapshot 1x)
+  const FLASH_EXPORT_PT_POR_PX = 0.75; // 96 css-px/in -> 72pt/in
+
+  /** Recria um gráfico Chart.js num <canvas> temporário, em alta resolução,
+   *  reaproveitando o MESMO dataset/opções do gráfico ao vivo (chart.config) —
+   *  sem duplicar cálculos/indicadores. Retorna um PNG (data URI) ou null se
+   *  o canvas não tiver um gráfico Chart.js associado (aí quem chama cai de
+   *  volta no snapshot simples do canvas original). */
+  function flashCapturarGraficoHiRes(origCanvas, scale) {
+    const chart = (window.Chart && Chart.getChart) ? Chart.getChart(origCanvas) : null;
+    if (!chart) return null;
+    const cssW = origCanvas.clientWidth || origCanvas.width || 300;
+    const cssH = origCanvas.clientHeight || origCanvas.height || 150;
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = Math.max(1, Math.round(cssW * scale));
+    tempCanvas.height = Math.max(1, Math.round(cssH * scale));
+    tempCanvas.style.cssText = `position:fixed;left:-99999px;top:0;width:${cssW}px;height:${cssH}px;`;
+    document.body.appendChild(tempCanvas);
+    let dataUrl = null;
+    let tempChart = null;
+    try {
+      const cfg = chart.config;
+      tempChart = new Chart(tempCanvas, {
+        type: cfg.type,
+        data: cfg.data,
+        options: Object.assign({}, cfg.options, {
+          responsive: false, maintainAspectRatio: false, animation: false, devicePixelRatio: 1,
+        }),
+      });
+      dataUrl = tempCanvas.toDataURL('image/png');
+    } catch (err) {
+      console.error('Falha ao recapturar gráfico em alta resolução, usando snapshot simples:', err);
+      dataUrl = null;
+    } finally {
+      if (tempChart) tempChart.destroy();
+      document.body.removeChild(tempCanvas);
+    }
+    return dataUrl;
+  }
+
+  /** Clona cabeçalho + conteúdo do Flash, substitui os gráficos por PNGs em
+   *  alta resolução, embrulha em SVG/foreignObject e rasteriza no canvas de
+   *  saída (escala `scale`). Devolve também, em px já na escala de saída, o
+   *  topo de cada ".section-title" — os pontos naturais de quebra usados
+   *  pela paginação do PDF. */
+  async function flashBuildExportCanvas(scale) {
+    const header = document.getElementById('topHeader');
+    const flashHeader = document.querySelector('#page-flash .page-header');
+    const content = document.getElementById('flashConteudo');
+    if (!header || !flashHeader || !content) throw new Error('Elementos do Flash Semanal não encontrados.');
+
+    let measureHost = null;
+    try {
+      const wrap = document.createElement('div');
+      wrap.className = 'capture-wrap';
+      const headerClone = header.cloneNode(true);
+      const actions = headerClone.querySelector('.header-actions');
+      if (actions) actions.remove(); // não faz sentido exportar o botão de modo escuro
+      wrap.appendChild(headerClone);
+      wrap.appendChild(flashHeader.cloneNode(true));
+      const contentClone = content.cloneNode(true);
+      wrap.appendChild(contentClone);
+
+      // troca cada <canvas> do clone por uma <img> — em alta resolução quando é um
+      // gráfico Chart.js (mesma ordem no DOM que os originais), senão o snapshot simples
+      const origCanvases = [header, flashHeader, content].flatMap(el => Array.from(el.querySelectorAll('canvas')));
+      const cloneCanvases = Array.from(wrap.querySelectorAll('canvas'));
+      cloneCanvases.forEach((c, i) => {
+        const orig = origCanvases[i];
+        if (!orig) { c.remove(); return; }
+        const img = document.createElement('img');
+        img.src = flashCapturarGraficoHiRes(orig, scale) || orig.toDataURL('image/png');
+        // Responsivo: o layout de exportação (CAPTURE_WIDTH fixo) redimensiona as colunas
+        // de .charts-row/.donut-wrap de forma diferente da tela ao vivo — fixar a imagem na
+        // largura ORIGINAL da tela (px) fazia o gráfico "vazar" para fora do painel quando a
+        // coluna do extrato ficava mais estreita que a tela ao vivo, cortando o gráfico (bug
+        // real, reportado pelo usuário: "há gráficos cortados"). width:100%+height:auto
+        // preserva a proporção (a imagem recapturada em alta resolução já tem a mesma razão
+        // w/h da tela) e sempre se ajusta exatamente à largura real da coluna no extrato.
+        img.style.cssText = `width:100%;height:auto;display:block;`;
+        c.replaceWith(img);
+      });
+
+      // fixa os valores computados de todas as CSS custom properties (--var) direto no wrapper:
+      // dentro de um <foreignObject>, a raiz do clone não é o :root do documento, então var()
+      // não herdaria os tokens de tema (claro/escuro) só por estar dentro do <svg>.
+      const rootStyle = getComputedStyle(document.documentElement);
+      const varNames = new Set();
+      for (const sheet of document.styleSheets) {
+        let rules;
+        try { rules = sheet.cssRules; } catch (e) { continue; }
+        if (!rules) continue;
+        for (const rule of rules) {
+          if (!rule.style) continue;
+          for (let i = 0; i < rule.style.length; i++) {
+            const prop = rule.style[i];
+            if (prop && prop.startsWith('--')) varNames.add(prop);
+          }
+        }
+      }
+      let bakedVars = '';
+      varNames.forEach(v => { bakedVars += `${v}:${rootStyle.getPropertyValue(v)};`; });
+
+      let cssText = '';
+      for (const sheet of document.styleSheets) {
+        try { for (const rule of sheet.cssRules) cssText += rule.cssText + '\n'; } catch (e) { /* ignore */ }
+      }
+      const styleTag = document.createElement('style');
+      styleTag.textContent = cssText;
+      wrap.insertBefore(styleTag, wrap.firstChild);
+
+      const CAPTURE_WIDTH = 1200;
+      // replica o atributo data-theme do <html> no wrapper: várias regras de tema escuro no
+      // CSS (etiquetas amarelas das seções, cards, cor de fundo etc.) são seletores
+      // "[data-theme=\"dark\"] .algo" — sem esse atributo em algum ancestral do clone, essas
+      // regras nunca combinam dentro do <foreignObject> e o extrato sai com o tema errado/quebrado.
+      wrap.setAttribute('data-theme', document.documentElement.getAttribute('data-theme') || 'light');
+      wrap.setAttribute('style',
+        bakedVars +
+        `width:${CAPTURE_WIDTH}px;max-width:${CAPTURE_WIDTH}px;box-sizing:border-box;` +
+        `background:${rootStyle.getPropertyValue('--bg') || '#fff'};color:${rootStyle.getPropertyValue('--text') || '#141414'};` +
+        `font-family:Arial,sans-serif;font-size:12px;padding:24px;`);
+
+      measureHost = document.createElement('div');
+      measureHost.style.cssText = 'position:fixed;left:-99999px;top:0;pointer-events:none;';
+      measureHost.appendChild(wrap);
+      document.body.appendChild(measureHost);
+      const totalHeight = Math.ceil(wrap.scrollHeight);
+      const wrapTop = wrap.getBoundingClientRect().top;
+      const sectionOffsets = Array.from(contentClone.querySelectorAll('.section-title'))
+        .map(el => Math.round(el.getBoundingClientRect().top - wrapTop));
+      document.body.removeChild(measureHost);
+      measureHost = null;
+
+      const xml = new XMLSerializer().serializeToString(wrap);
+      const svgString = `<svg xmlns="http://www.w3.org/2000/svg" width="${CAPTURE_WIDTH}" height="${totalHeight}">` +
+        `<foreignObject width="100%" height="100%">${xml}</foreignObject></svg>`;
+
+      // Usa data: URI em vez de Blob+createObjectURL: em páginas abertas via file://, uma imagem SVG
+      // com <foreignObject> carregada de uma blob: URL fica "tainted" para fins de toDataURL/getImageData
+      // (peculiaridade do Chromium com origens file:// - confirmado empiricamente), mesmo sendo a mesma
+      // página/origem; uma data: URI não sofre essa restrição.
+      const dataUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
+      const rasterImg = new Image();
+      await new Promise((resolve, reject) => {
+        rasterImg.onload = resolve;
+        rasterImg.onerror = () => reject(new Error('Falha ao rasterizar a imagem da página.'));
+        rasterImg.src = dataUri;
+      });
+
+      const outCanvas = document.createElement('canvas');
+      outCanvas.width = CAPTURE_WIDTH * scale;
+      outCanvas.height = totalHeight * scale;
+      const ctx = outCanvas.getContext('2d');
+      ctx.fillStyle = rootStyle.getPropertyValue('--bg') || '#ffffff';
+      ctx.fillRect(0, 0, outCanvas.width, outCanvas.height);
+      ctx.drawImage(rasterImg, 0, 0, outCanvas.width, outCanvas.height);
+
+      return {
+        canvas: outCanvas,
+        scale,
+        sectionBreaksPx: sectionOffsets.map(y => Math.round(y * scale)).filter(y => y > 0 && y < outCanvas.height),
+      };
+    } finally {
+      if (measureHost && measureHost.parentNode) measureHost.parentNode.removeChild(measureHost);
+    }
+  }
+
+  /** Decide onde cortar o extrato em páginas: nunca no meio de uma seção —
+   *  só nos pontos naturais (topo de cada ".section-title"). Usa a proporção
+   *  A4 retrato só como referência de altura "confortável" de página, com a
+   *  largura real do dashboard (não força A4 nem comprime o conteúdo). */
+  function flashComputePageBreaks(totalHeightPx, sectionBreaksPx, pageWidthPx) {
+    const maxPageHeight = Math.round(pageWidthPx * (297 / 210));
+    const pts = [...new Set([0, ...sectionBreaksPx.filter(y => y > 0 && y < totalHeightPx), totalHeightPx])].sort((a, b) => a - b);
+    const pages = [];
+    let pageStart = pts[0];
+    let lastAccepted = pts[0];
+    for (let i = 1; i < pts.length; i++) {
+      const candidate = pts[i];
+      if (candidate - pageStart <= maxPageHeight) {
+        lastAccepted = candidate;
+      } else {
+        if (lastAccepted > pageStart) { pages.push([pageStart, lastAccepted]); pageStart = lastAccepted; }
+        lastAccepted = candidate; // seção isolada maior que o limite: mantém inteira numa página própria
+      }
+    }
+    pages.push([pageStart, pts[pts.length - 1]]);
+    return pages.filter(([a, b]) => b > a);
+  }
+
+  /** Monta um PDF válido "na mão" (sem lib): 1 página por imagem JPEG,
+   *  cada imagem embutida como XObject com /Filter /DCTDecode (os bytes do
+   *  JPEG entram direto no stream, sem precisar reimplementar compressão). */
+  function flashBuildPdfBytes(pages) {
+    const enc = new TextEncoder();
+    const chunks = [];
+    let length = 0;
+    const offsets = [];
+    function push(part) {
+      const bytes = (typeof part === 'string') ? enc.encode(part) : part;
+      chunks.push(bytes);
+      length += bytes.length;
+    }
+    function beginObj(num) { offsets[num] = length; push(`${num} 0 obj\n`); }
+    function endObj() { push('endobj\n'); }
+
+    const n = pages.length;
+    push('%PDF-1.4\n');
+    push(new Uint8Array([0x25, 0xE2, 0xE3, 0xCF, 0xD3, 0x0A])); // comentário binário convencional pós-cabeçalho
+
+    beginObj(1); push('<< /Type /Catalog /Pages 2 0 R >>\n'); endObj();
+
+    const kids = [];
+    for (let k = 0; k < n; k++) kids.push(`${3 + k * 3} 0 R`);
+    beginObj(2); push(`<< /Type /Pages /Kids [${kids.join(' ')}] /Count ${n} >>\n`); endObj();
+
+    pages.forEach((p, k) => {
+      const pageObjNum = 3 + k * 3;
+      const contentObjNum = 4 + k * 3;
+      const imageObjNum = 5 + k * 3;
+
+      beginObj(pageObjNum);
+      push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${p.widthPt.toFixed(2)} ${p.heightPt.toFixed(2)}] ` +
+        `/Resources << /XObject << /Im${k} ${imageObjNum} 0 R >> >> /Contents ${contentObjNum} 0 R >>\n`);
+      endObj();
+
+      const contentBytes = enc.encode(`q ${p.widthPt.toFixed(2)} 0 0 ${p.heightPt.toFixed(2)} 0 0 cm /Im${k} Do Q`);
+      beginObj(contentObjNum);
+      push(`<< /Length ${contentBytes.length} >>\nstream\n`);
+      push(contentBytes);
+      push('\nendstream\n');
+      endObj();
+
+      beginObj(imageObjNum);
+      push(`<< /Type /XObject /Subtype /Image /Width ${p.pxW} /Height ${p.pxH} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${p.jpegBytes.length} >>\nstream\n`);
+      push(p.jpegBytes);
+      push('\nendstream\n');
+      endObj();
+    });
+
+    const xrefStart = length;
+    const totalObjs = 2 + n * 3;
+    push(`xref\n0 ${totalObjs + 1}\n`);
+    push('0000000000 65535 f \n');
+    for (let i = 1; i <= totalObjs; i++) push(String(offsets[i]).padStart(10, '0') + ' 00000 n \n');
+    push(`trailer\n<< /Size ${totalObjs + 1} /Root 1 0 R >>\nstartxref\n${xrefStart}\n%%EOF`);
+
+    const out = new Uint8Array(length);
+    let o = 0;
+    for (const c of chunks) { out.set(c, o); o += c.length; }
+    return out;
+  }
+
+  function flashExportFilename(ext) {
+    const semanaStr = flashState.semana != null ? String(flashState.semana).padStart(2, '0') : '00';
+    return `Flash_Semanal_${flashState.unidade}_S${semanaStr}_${flashState.ano}.${ext}`;
+  }
+
+  function flashDownloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }
+
+  async function flashExportComEstado(label, fn) {
+    const btn = document.getElementById('flashBtnGerarExtrato');
+    const originalLabel = btn.textContent;
+    flashFecharMenuExtrato();
+    btn.disabled = true;
+    btn.textContent = label;
+    // yield a frame so the label above actually paints before the (synchronous-ish) capture work runs
+    await new Promise(r => setTimeout(r, 30));
+    try {
+      await fn();
+    } catch (err) {
+      console.error('Erro ao gerar extrato do Flash Semanal:', err);
+      alert('Não foi possível gerar o extrato desta página. Tente novamente.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+    }
+  }
+
+  async function flashExportPng() {
+    await flashExportComEstado('Gerando PNG…', async () => {
+      const { canvas } = await flashBuildExportCanvas(FLASH_EXPORT_SCALE);
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+      if (!blob) throw new Error('Falha ao gerar o PNG.');
+      flashDownloadBlob(blob, flashExportFilename('png'));
+    });
+  }
+
+  async function flashExportPdf() {
+    await flashExportComEstado('Gerando PDF…', async () => {
+      const { canvas, scale, sectionBreaksPx } = await flashBuildExportCanvas(FLASH_EXPORT_SCALE);
+      const pageRanges = flashComputePageBreaks(canvas.height, sectionBreaksPx, canvas.width);
+      const pages = [];
+      for (const [y0, y1] of pageRanges) {
+        const sliceH = y1 - y0;
+        if (sliceH <= 0) continue;
+        const sliceCanvas = document.createElement('canvas');
+        sliceCanvas.width = canvas.width;
+        sliceCanvas.height = sliceH;
+        const sctx = sliceCanvas.getContext('2d');
+        sctx.fillStyle = '#ffffff';
+        sctx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
+        sctx.drawImage(canvas, 0, y0, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
+        const jpegBlob = await new Promise(resolve => sliceCanvas.toBlob(resolve, 'image/jpeg', 0.95));
+        const jpegBytes = new Uint8Array(await jpegBlob.arrayBuffer());
+        pages.push({
+          pxW: sliceCanvas.width,
+          pxH: sliceCanvas.height,
+          widthPt: sliceCanvas.width / scale * FLASH_EXPORT_PT_POR_PX,
+          heightPt: sliceCanvas.height / scale * FLASH_EXPORT_PT_POR_PX,
+          jpegBytes,
+        });
+      }
+      const pdfBytes = flashBuildPdfBytes(pages);
+      flashDownloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), flashExportFilename('pdf'));
+    });
+  }
+
+  /** Extrato em HTML autônomo: mesmo clone (cabeçalho + Flash) usado no PNG/PDF, mas serializado como documento
+   *  HTML com CSS, cores de tema e gráficos (imagens em alta resolução) embutidos — abre sozinho, fora do portal. */
+  async function flashBuildExportHtmlString() {
+    const header = document.getElementById('topHeader');
+    const flashHeader = document.querySelector('#page-flash .page-header');
+    const content = document.getElementById('flashConteudo');
+    if (!header || !flashHeader || !content) throw new Error('Elementos do Flash Semanal não encontrados.');
+    const wrap = document.createElement('div');
+    wrap.className = 'capture-wrap';
+    const headerClone = header.cloneNode(true);
+    const actions = headerClone.querySelector('.header-actions');
+    if (actions) actions.remove();
+    wrap.appendChild(headerClone);
+    wrap.appendChild(flashHeader.cloneNode(true));
+    wrap.appendChild(content.cloneNode(true));
+    const origCanvases = [header, flashHeader, content].flatMap(el => Array.from(el.querySelectorAll('canvas')));
+    Array.from(wrap.querySelectorAll('canvas')).forEach((c, i) => {
+      const orig = origCanvases[i];
+      if (!orig) { c.remove(); return; }
+      const img = document.createElement('img');
+      img.src = flashCapturarGraficoHiRes(orig, FLASH_EXPORT_SCALE) || orig.toDataURL('image/png');
+      img.style.cssText = 'width:100%;height:auto;display:block;';
+      c.replaceWith(img);
+    });
+    const rootStyle = getComputedStyle(document.documentElement);
+    const varNames = new Set();
+    let cssText = '';
+    for (const sheet of document.styleSheets) {
+      let rules;
+      try { rules = sheet.cssRules; } catch (e) { continue; }
+      if (!rules) continue;
+      for (const rule of rules) {
+        cssText += rule.cssText + '\n';
+        if (!rule.style) continue;
+        for (let i = 0; i < rule.style.length; i++) { const prop = rule.style[i]; if (prop && prop.startsWith('--')) varNames.add(prop); }
+      }
+    }
+    let bakedVars = '';
+    varNames.forEach(v => { bakedVars += `${v}:${rootStyle.getPropertyValue(v)};`; });
+    const tema = document.documentElement.getAttribute('data-theme') || 'light';
+    const bg = rootStyle.getPropertyValue('--bg') || '#fff';
+    const fg = rootStyle.getPropertyValue('--text') || '#141414';
+    wrap.setAttribute('data-theme', tema);
+    wrap.setAttribute('style', bakedVars + `max-width:1200px;margin:0 auto;box-sizing:border-box;background:${bg};color:${fg};font-family:Arial,sans-serif;font-size:12px;padding:24px;`);
+    const titulo = `Flash Semanal — ${flashState.unidade} — Semana ${String(flashState.semana).padStart(2, '0')}/${flashState.ano}`;
+    return '<!DOCTYPE html>\n<html lang="pt-BR" data-theme="' + tema + '"><head><meta charset="utf-8">' +
+      '<meta name="viewport" content="width=device-width,initial-scale=1"><title>' + titulo + '</title>' +
+      '<style>' + cssText + '\nbody{margin:0;background:' + bg + ';}</style></head><body>' + wrap.outerHTML + '</body></html>';
+  }
+
+  async function flashExportHtml() {
+    await flashExportComEstado('Gerando HTML…', async () => {
+      const html = await flashBuildExportHtmlString();
+      flashDownloadBlob(new Blob([html], { type: 'text/html;charset=utf-8' }), flashExportFilename('html'));
+    });
+  }
+
+  function flashFecharMenuExtrato() {
+    const menu = document.getElementById('flashExportMenu');
+    if (menu) menu.hidden = true;
+  }
+
+  function flashWireMenuExtrato() {
+    const btn = document.getElementById('flashBtnGerarExtrato');
+    const menu = document.getElementById('flashExportMenu');
+    btn.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      menu.hidden = !menu.hidden;
+    });
+    document.getElementById('flashMenuItemPdf').addEventListener('click', (ev) => { ev.stopPropagation(); flashExportPdf(); });
+    document.getElementById('flashMenuItemPng').addEventListener('click', (ev) => { ev.stopPropagation(); flashExportPng(); });
+    const _mh = document.getElementById('flashMenuItemHtml');
+    if (_mh) _mh.addEventListener('click', (ev) => { ev.stopPropagation(); flashExportHtml(); });
+    document.addEventListener('click', () => flashFecharMenuExtrato());
+    document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') flashFecharMenuExtrato(); });
   }
 
   function flashRenderKpiCards(wk) {

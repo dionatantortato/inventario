@@ -204,6 +204,14 @@ h1 span{color:var(--muted);font-weight:400;}
 
 /* ---------------------------------------------------------------- Painéis / gráficos */
 .charts-row{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;}
+.flash-div-lista{margin-top:7px;display:flex;flex-direction:column;gap:2px;text-align:left;font-size:9.5px;}
+.flash-div-linha{display:flex;align-items:center;gap:5px;}
+.flash-div-dot{width:8px;height:8px;border-radius:2px;flex:0 0 8px;}
+.flash-div-nome{flex:1;color:var(--muted);}
+.flash-div-linha b{color:var(--text);font-weight:700;}
+.flash-sem-proc{display:block;color:var(--muted);font-size:10px;line-height:1.35;}
+.flash-roc-grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media (max-width:900px){.flash-roc-grid2{grid-template-columns:1fr;}}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.04);}
 .panel h3{font-family:Arial,sans-serif;font-size:13px;text-transform:uppercase;letter-spacing:.05em;margin:0 0 12px;color:var(--muted);font-weight:600;}
 canvas{max-height:280px;}
@@ -746,16 +754,21 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
       <div class="panel"><h3>Processos × Divergências por Dia</h3><canvas id="flashDiarioBarChart" style="max-height:260px;"></canvas></div>
     </div>
 
-    <div class="section-title" style="margin-top:24px;"><span class="tag">ROCs</span><h2>ROC Interna × ROC Externa</h2><div class="rule"></div></div>
-    <div class="charts-row">
-      <div class="panel"><h3>Aberta × Fechada</h3><canvas id="flashRocChart" style="max-height:220px;"></canvas></div>
-      <div class="panel">
-        <div class="docas" id="flashRocKpiGrid" style="margin-bottom:14px;"></div>
-        <div class="table-wrap table-wrap-v"><table class="data" id="tblFlashRocDetalhe"></table></div>
-        <div class="note" id="flashRocNota" style="font-size:11px;color:var(--muted);margin-top:8px;"></div>
-      </div>
+    <div class="section-title" style="margin-top:24px;"><span class="tag">ROCs</span><h2>ROC Interna × ROC Externa <span style="font-size:12px;font-weight:400;color:var(--muted);">/ por tipo de desvio, situação e cliente</span></h2><div class="rule"></div></div>
+    <div class="docas" id="flashRocKpiGrid" style="margin-bottom:14px;grid-template-columns:repeat(4,1fr);"></div>
+    <div class="docas" id="flashRocKpiGrid2" style="margin-bottom:16px;grid-template-columns:repeat(2,1fr);"></div>
+    <div class="flash-roc-grid2">
+      <div class="panel"><h3>Por Tipo de Desvio — Aberta × Fechada</h3><canvas id="flashRocChart" style="max-height:280px;"></canvas><div class="note" id="flashRocTipoNota" style="font-size:11px;color:var(--muted);margin-top:8px;"></div></div>
+      <div class="panel"><h3>ROCs por Cliente — Interna × Externa · Falta × Sobra</h3><canvas id="flashRocClienteChart" style="max-height:280px;"></canvas><div class="note" id="flashRocClienteNota" style="font-size:11px;color:var(--muted);margin-top:8px;"></div></div>
     </div>
-    <div class="note" style="font-size:11px;color:var(--muted);margin-top:8px;">Status: Abertas = registros com Data de Abertura (ROC - Ocorrências, Externa) ou Data Inicial (Não Físicos/Sobrantes, Interna) na semana selecionada. Fechadas = registros com Data de Retorno (Externa) ou Data Final (Interna) na semana selecionada — independentemente de quando foram abertos. ROC Interna considera apenas os registros de Não Físicos/Sobrantes com a coluna ROC preenchida (desvio de fato escalado para uma ROC); os demais aparecem em Divergências do Período, mas não entram aqui. Por serem consultas independentes por data, um mesmo registro aberto e fechado na mesma semana aparece nas duas contagens, e Abertas + Fechadas não precisa bater com o total de ROC Interna/Externa.</div>
+
+    <div class="section-title" style="margin-top:24px;"><span class="tag">POR CLIENTE</span><h2>ROCs por Cliente <span style="font-size:12px;font-weight:400;color:var(--muted);">/ abertas e fechadas na semana</span></h2><div class="rule"></div></div>
+    <div class="panel table-wrap" style="overflow-x:auto;"><table class="data" id="tblFlashRocCliente"></table></div>
+
+    <div class="section-title" style="margin-top:24px;"><span class="tag">DETALHE</span><h2>ROCs da Semana</h2><div class="rule"></div></div>
+    <div class="panel"><div class="table-wrap table-wrap-v"><table class="data" id="tblFlashRocDetalhe"></table></div>
+      <div class="note" id="flashRocNota" style="font-size:11px;color:var(--muted);margin-top:8px;"></div></div>
+    <div class="note" style="font-size:11px;color:var(--muted);margin-top:8px;">Interna: ROC vinculada a registros das abas Não Físicos (Falta) e Sobrantes (Sobra); Aberta = Data Inicial do desvio na semana, Fechada = Data Final na semana. Externa (aba ROC - Ocorrências): Aberta = Data de Abertura na semana, Fechada = Data de Retorno na semana; o tipo Falta / Sobra vem da descrição da ROC (Material/Desvio Faltante ou Sobrante) e os demais tipos (lote, part number etc.) ficam em Outros. Uma mesma ROC pode aparecer como aberta e fechada na mesma semana.</div>
 
     <div class="section-title" style="margin-top:24px;"><span class="tag">POR CLIENTE</span><h2>O que Foi Feito na Semana</h2><div class="rule"></div></div>
     <div class="panel table-wrap table-wrap-v"><table class="data" id="tblFlashPorCliente"></table></div>
@@ -1833,7 +1846,7 @@ const Charts = (() => {
 
   /* --------------------------------------------------------- Barras agrupadas (2+ séries lado a lado) ---- */
   /** Ex.: Processos × Divergências por dia, ROC Aberta × Fechada por tipo — usado no Flash Semanal. */
-  function groupedBar(id, { labels, series, valueFormatter, min, max }) {
+  function groupedBar(id, { labels, series, valueFormatter, min, max, stacked }) {
     return make(id, {
       type: 'bar',
       data: { labels, datasets: series.map(s => ({ label: s.label, data: s.data, backgroundColor: s.color, borderRadius: 4 })) },
@@ -1843,8 +1856,8 @@ const Charts = (() => {
           tooltip: valueFormatter ? { callbacks: { label: ctx => `${ctx.dataset.label}: ${valueFormatter(ctx.raw)}` } } : {},
         },
         scales: {
-          y: { grid: { color: GRID_COLOR }, beginAtZero: true, ...(min != null ? { min } : {}), ...(max != null ? { max } : {}) },
-          x: { grid: { display: false }, ticks: { font: { size: 9 } } },
+          y: { grid: { color: GRID_COLOR }, beginAtZero: true, stacked: !!stacked, ...(min != null ? { min } : {}), ...(max != null ? { max } : {}) },
+          x: { grid: { display: false }, stacked: !!stacked, ticks: { font: { size: 9 } } },
         },
       },
     });
@@ -4346,9 +4359,13 @@ const Dashboard = (() => {
       </div>`).join('');
 
     function subTextFor(w) {
-      if (!w.temDados) return 'Não houve dados para o período.';
-      if (!w.divergencias) return 'Sem divergências no período.';
-      return `${Charts.fmt.int(w.divergencias)} divergências<br>${Charts.fmt.pct1(w.acuracidadeCard * 100)} acurácia`;
+      // sem processo apontado na semana (inclui unidades só com ROC): mensagem no lugar do detalhe
+      if (!w.temDados || !(w.processos > 0)) return '<span class="flash-sem-proc">Não houve apontamentos de processos realizados no período.</span>';
+      const topo = w.divergencias
+        ? `${Charts.fmt.int(w.divergencias)} divergências<br>${Charts.fmt.pct1(w.acuracidadeCard * 100)} acurácia`
+        : `Sem divergências no período.<br>${Charts.fmt.int(w.processos)} processo(s) realizado(s)`;
+      const linhas = FLASH_DIVERG_SEGMENTS.map(d => `<div class="flash-div-linha"><span class="flash-div-dot" style="background:${d.color}"></span><span class="flash-div-nome">${d.label}</span><b>${Charts.fmt.int((w.divTipo && w.divTipo[d.key]) || 0)}</b></div>`).join('');
+      return `${topo}<div class="flash-div-lista">${linhas}</div>`;
     }
     rows.forEach(r => {
       const w = r.wk;
@@ -4365,14 +4382,30 @@ const Dashboard = (() => {
 
   function flashRenderTabelaUnidades(semana) {
     const rows = FLASH_UNIT_ORDER.map(u => ({ codigo: u, wk: flashWeekOf(u, semana) }));
+    const tp = (w, k) => (w.divTipo && w.divTipo[k]) || 0;
+    // ROCs abertas na semana por tipo de desvio (Interna: Não Físicos = Falta, Sobrantes = Sobra; Externa: descrição da ROC)
+    const classificada = w => (w.rocDetalhe || []).every(d => d.desvio);
+    const rocCnt = (w, tipo, desvio) => classificada(w) ? (w.rocDetalhe || []).filter(d => d.tipo === tipo && d.status === 'Aberta' && d.desvio === desvio).length : null;
+    const fmtN = v => v == null ? '—' : Charts.fmt.int(v);
+    const somaN = (arr) => { const v = arr.filter(x => x != null); return v.length ? v.reduce((a, b) => a + b, 0) : null; };
+    const comDados = rows.filter(r => r.wk.temDados).map(r => r.wk);
+    const colunas = [
+      w => w.processos, w => w.enderecosInventariados, w => w.bipados,
+      w => tp(w, 'endereco'), w => tp(w, 'naoFisicos'), w => tp(w, 'sobras'), w => tp(w, 'outras'),
+      w => w.rocInterna, w => rocCnt(w, 'Interna', 'Falta'), w => rocCnt(w, 'Interna', 'Sobra'),
+      w => w.rocExterna, w => rocCnt(w, 'Externa', 'Falta'), w => rocCnt(w, 'Externa', 'Sobra'), w => rocCnt(w, 'Externa', 'Outros'),
+    ];
+    const totBip = somaN(comDados.map(w => w.bipados)) || 0, totDiv = somaN(comDados.map(w => w.divergencias)) || 0;
+    const totAcc = totBip > 0 ? Math.max(0, 1 - totDiv / totBip) : 0;
     document.getElementById('tblFlashUnidade').innerHTML = `
-      <thead><tr><th>Unidade</th><th class="num">Processos</th><th class="num">End. Invent.</th><th class="num">Bipagens</th><th class="num">Divergências</th><th class="num">Acuracidade</th><th class="num">ROC Interna</th><th class="num">ROC Externa</th></tr></thead>
+      <thead><tr><th>Unidade</th><th class="num">Processos</th><th class="num">End. Invent.</th><th class="num">Bipagens</th><th class="num">Desvio Endereço</th><th class="num">Não Físicos</th><th class="num">Sobras</th><th class="num">Outras Div.</th><th class="num">ROC Interna</th><th class="num">Int. Falta</th><th class="num">Int. Sobra</th><th class="num">ROC Externa</th><th class="num">Ext. Falta</th><th class="num">Ext. Sobra</th><th class="num">Ext. Outros</th><th class="num">Acuracidade</th></tr></thead>
       <tbody>${rows.map(r => {
         const w = r.wk;
         const dc = flashDimClass(r.codigo).trim();
-        if (!w.temDados) return `<tr class="${dc}"><td>${r.codigo}</td><td colspan="7" style="color:var(--muted);">Não houve dados para o período.</td></tr>`;
-        return `<tr class="${dc}"><td>${r.codigo}</td><td class="num">${Charts.fmt.int(w.processos)}</td><td class="num">${Charts.fmt.int(w.enderecosInventariados)}</td><td class="num">${Charts.fmt.int(w.bipados)}</td><td class="num">${Charts.fmt.int(w.divergencias)}</td><td class="num">${Charts.fmt.pct2(w.acuracidadeCard * 100)}</td><td class="num">${Charts.fmt.int(w.rocInterna)}</td><td class="num">${Charts.fmt.int(w.rocExterna)}</td></tr>`;
-      }).join('')}</tbody>`;
+        if (!w.temDados) return `<tr class="${dc}"><td>${r.codigo}</td><td colspan="15" style="color:var(--muted);">Não houve dados para o período.</td></tr>`;
+        return `<tr class="${dc}"><td>${r.codigo}</td>${colunas.map(fn => `<td class="num">${fmtN(fn(w))}</td>`).join('')}<td class="num" style="font-weight:600;">${w.bipados > 0 ? Charts.fmt.pct2(w.acuracidadeCard * 100) : '—'}</td></tr>`;
+      }).join('')}
+      <tr style="font-weight:700;border-top:2px solid var(--line);"><td>Total</td>${colunas.map(fn => `<td class="num">${fmtN(somaN(comDados.map(fn)))}</td>`).join('')}<td class="num">${comDados.length ? Charts.fmt.pct2(totAcc * 100) : '—'}</td></tr></tbody>`;
   }
 
   function flashDiarioEmptyMsg(canvasId, show) {
@@ -4414,34 +4447,162 @@ const Dashboard = (() => {
   }
 
   function flashRenderRoc(wk) {
+    const el = id => document.getElementById(id);
     if (!wk.temDados) {
-      Charts.destroy('flashRocChart');
-      document.getElementById('flashRocKpiGrid').innerHTML = '<div class="empty-msg">Não houve dados para o período.</div>';
-      document.getElementById('tblFlashRocDetalhe').innerHTML = '';
-      document.getElementById('flashRocNota').textContent = '';
+      Charts.destroy('flashRocChart'); Charts.destroy('flashRocClienteChart');
+      el('flashRocKpiGrid').innerHTML = '<div class="empty-msg">Não houve dados para o período.</div>';
+      el('flashRocKpiGrid2').innerHTML = '';
+      ['tblFlashRocCliente', 'tblFlashRocDetalhe'].forEach(id => { el(id).innerHTML = ''; });
+      ['flashRocNota', 'flashRocTipoNota', 'flashRocClienteNota'].forEach(id => { el(id).textContent = ''; });
       return;
     }
-    Charts.groupedBar('flashRocChart', {
-      labels: ['Interna', 'Externa'],
-      series: [
-        { label: 'Aberta', data: [wk.rocInternaAbertas || 0, wk.rocExternaAbertas || 0], color: '#E2483D' },
-        { label: 'Fechada', data: [wk.rocInternaFechadas || 0, wk.rocExternaFechadas || 0], color: '#2FAE66' },
-      ],
+    const det = wk.rocDetalhe || [];
+    const classificado = det.every(d => d.desvio);
+    const N = f => det.filter(f).length;
+    const g = (tipo, status, desvio) => N(d => d.tipo === tipo && d.status === status && (desvio == null || d.desvio === desvio));
+    const int = Charts.fmt.int;
+    const semClass = 'Semana sem classificação por tipo de desvio';
+
+    // ---- Indicadores
+    const clientes = {};
+    det.forEach(d => {
+      const nome = String(d.cliente || '—').trim() || '—';
+      const chave = nome.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      const c = clientes[chave] || (clientes[chave] = { cliente: nome, unidades: new Set(), iAb: 0, iFe: 0, eAb: 0, eFe: 0, falta: 0, sobra: 0, outros: 0, total: 0, iFalta: 0, iSobra: 0, eFalta: 0, eSobra: 0, eOutros: 0 });
+      if (d.unidade) c.unidades.add(d.unidade);
+      const interna = d.tipo === 'Interna';
+      if (interna) { if (d.status === 'Fechada') c.iFe++; else c.iAb++; } else { if (d.status === 'Fechada') c.eFe++; else c.eAb++; }
+      c.total++;
+      if (d.desvio === 'Falta') { c.falta++; interna ? c.iFalta++ : c.eFalta++; }
+      else if (d.desvio === 'Sobra') { c.sobra++; interna ? c.iSobra++ : c.eSobra++; }
+      else { c.outros++; if (!interna) c.eOutros++; }
     });
-    document.getElementById('flashRocKpiGrid').innerHTML = [
-      { label: 'ROC Interna (total na semana)', value: Charts.fmt.int(wk.rocInterna), sub: 'Não Físicos + Sobras com ROC vinculada, na semana', status: 'semdado' },
-      { label: 'ROC Externa (total na semana)', value: Charts.fmt.int(wk.rocExterna), sub: 'Registros com Data Abertura na semana (ROC - Ocorrências)', status: 'semdado' },
+    const lista = Object.values(clientes).sort((a, b) => b.total - a.total || a.cliente.localeCompare(b.cliente));
+    const fs = (tipo, status) => classificado
+      ? `Falta ${int(g(tipo, status, 'Falta'))} · Sobra ${int(g(tipo, status, 'Sobra'))}${tipo === 'Externa' && g(tipo, status, 'Outros') ? ` · Outros ${int(g(tipo, status, 'Outros'))}` : ''}`
+      : semClass;
+    // Distribuição por unidade (ordem padrão das unidades); sem detalhe quando a ROC não traz a unidade (semanas antigas)
+    const ordemU = FLASH_UNIT_ORDER.concat(['—']);
+    const semUnid = !det.length || det.some(d => !d.unidade);
+    const lbl = t => `<span style="color:var(--text);">${t}:</span>`;
+    const porUnid = (f) => {
+      const m = {};
+      det.filter(f).forEach(d => { const u = d.unidade || '—'; m[u] = (m[u] || 0) + 1; });
+      const txt = ordemU.filter(u => m[u]).map(u => `${u} ${int(m[u])}`).join(' · ');
+      return `${lbl('Unidades')} ${semUnid ? 'sem detalhe por unidade nesta semana' : (txt || '—')}`;
+    };
+    const clientesPorUnid = () => {
+      const m = {};
+      det.forEach(d => { const u = d.unidade || '—'; (m[u] = m[u] || new Set()).add(String(d.cliente || '—').trim().toLowerCase()); });
+      const txt = ordemU.filter(u => m[u]).map(u => `${u} ${int(m[u].size)}`).join(' · ');
+      return `${lbl('Clientes por unidade')} ${semUnid ? 'sem detalhe por unidade nesta semana' : (txt || '—')}`;
+    };
+    const cx = (tipo, status) => fs(tipo, status) + '<br>' + porUnid(d => d.tipo === tipo && d.status === status);
+    el('flashRocKpiGrid').innerHTML = [
+      { label: 'ROC Interna · Abertas', value: int(wk.rocInternaAbertas || 0), sub: cx('Interna', 'Aberta'), status: 'semdado' },
+      { label: 'ROC Interna · Fechadas', value: int(wk.rocInternaFechadas || 0), sub: cx('Interna', 'Fechada'), status: 'semdado' },
+      { label: 'ROC Externa · Abertas', value: int(wk.rocExternaAbertas || 0), sub: cx('Externa', 'Aberta'), status: 'semdado' },
+      { label: 'ROC Externa · Fechadas', value: int(wk.rocExternaFechadas || 0), sub: cx('Externa', 'Fechada'), status: 'semdado' },
     ].map(kpiCardHtml).join('');
 
-    const detalhe = wk.rocDetalhe || [];
-    if (!detalhe.length) {
-      document.getElementById('tblFlashRocDetalhe').innerHTML = '<tbody><tr><td class="empty-msg">Nenhuma ROC (interna ou externa) na semana.</td></tr></tbody>';
-      document.getElementById('flashRocNota').textContent = '';
+    // Total de ROCs: situação, origem, tipo de desvio e unidades
+    const nAb = N(d => d.status === 'Aberta'), nFe = N(d => d.status === 'Fechada');
+    const nIn = N(d => d.tipo === 'Interna'), nEx = N(d => d.tipo === 'Externa');
+    const subTotal = [
+      `${lbl('Situação')} Abertas ${int(nAb)} · Fechadas ${int(nFe)}`,
+      `${lbl('Origem')} Interna ${int(nIn)} · Externa ${int(nEx)}`,
+      classificado ? `${lbl('Tipo de desvio')} Falta ${int(N(d => d.desvio === 'Falta'))} · Sobra ${int(N(d => d.desvio === 'Sobra'))} · Outros ${int(N(d => d.desvio === 'Outros'))}` : `${lbl('Tipo de desvio')} ${semClass.toLowerCase()}`,
+      classificado ? `${lbl('Interna')} Falta ${int(N(d => d.tipo === 'Interna' && d.desvio === 'Falta'))} · Sobra ${int(N(d => d.tipo === 'Interna' && d.desvio === 'Sobra'))} &nbsp;|&nbsp; ${lbl('Externa')} Falta ${int(N(d => d.tipo === 'Externa' && d.desvio === 'Falta'))} · Sobra ${int(N(d => d.tipo === 'Externa' && d.desvio === 'Sobra'))}${N(d => d.tipo === 'Externa' && d.desvio === 'Outros') ? ` · Outros ${int(N(d => d.tipo === 'Externa' && d.desvio === 'Outros'))}` : ''}` : '',
+      porUnid(() => true),
+    ].filter(Boolean).join('<br>');
+    // Clientes com ROC: maiores volumes, origem, tipo de desvio e distribuição por unidade
+    const cliDistintos = f => new Set(det.filter(f).map(d => String(d.cliente || '—').trim().toLowerCase())).size;
+    const subCli = lista.length ? [
+      `${lbl('Maiores volumes')} ${lista.slice(0, 5).map(c => `${c.cliente} ${int(c.total)}`).join(' · ')}`,
+      `${lbl('Origem')} Interna ${int(cliDistintos(d => d.tipo === 'Interna'))} · Externa ${int(cliDistintos(d => d.tipo === 'Externa'))} cliente(s)`,
+      classificado ? `${lbl('Tipo de desvio')} com Falta ${int(cliDistintos(d => d.desvio === 'Falta'))} · com Sobra ${int(cliDistintos(d => d.desvio === 'Sobra'))} cliente(s)` : '',
+      `${lbl('Situação')} com ROC aberta ${int(cliDistintos(d => d.status === 'Aberta'))} · com ROC fechada ${int(cliDistintos(d => d.status === 'Fechada'))}`,
+      clientesPorUnid(),
+    ].filter(Boolean).join('<br>') : 'Nenhuma ROC na semana';
+    el('flashRocKpiGrid2').innerHTML = [
+      { label: 'Total de ROCs na Semana', value: int(det.length), sub: subTotal, status: 'semdado' },
+      { label: 'Clientes com ROC', value: int(lista.length), sub: subCli, status: 'semdado' },
+    ].map(kpiCardHtml).join('');
+
+    // ---- Gráfico 1: por tipo de desvio × aberta/fechada
+    if (classificado && det.length) {
+      const cats = [['Interna', 'Falta'], ['Interna', 'Sobra'], ['Externa', 'Falta'], ['Externa', 'Sobra']];
+      if (g('Externa', 'Aberta', 'Outros') || g('Externa', 'Fechada', 'Outros')) cats.push(['Externa', 'Outros']);
+      Charts.groupedBar('flashRocChart', {
+        labels: cats.map(c => `${c[0]} · ${c[1]}`),
+        series: [
+          { label: 'Aberta', data: cats.map(c => g(c[0], 'Aberta', c[1])), color: '#E2483D' },
+          { label: 'Fechada', data: cats.map(c => g(c[0], 'Fechada', c[1])), color: '#2FAE66' },
+        ],
+      });
+      el('flashRocTipoNota').textContent = '';
     } else {
-      document.getElementById('tblFlashRocDetalhe').innerHTML = `
-        <thead><tr><th>Nº ROC</th><th>Cliente</th><th>Tipo</th><th>Status</th></tr></thead>
-        <tbody>${detalhe.map(r => `<tr><td>${r.numero}</td><td>${r.cliente}</td><td>${r.tipo}</td><td><span class="pill ${r.status === 'Fechada' ? 'green' : 'red'}">${r.status}</span></td></tr>`).join('')}</tbody>`;
-      document.getElementById('flashRocNota').textContent = `${Charts.fmt.int(detalhe.length)} registro(s) na semana selecionada`;
+      Charts.groupedBar('flashRocChart', {
+        labels: ['Interna', 'Externa'],
+        series: [
+          { label: 'Aberta', data: [wk.rocInternaAbertas || 0, wk.rocExternaAbertas || 0], color: '#E2483D' },
+          { label: 'Fechada', data: [wk.rocInternaFechadas || 0, wk.rocExternaFechadas || 0], color: '#2FAE66' },
+        ],
+      });
+      el('flashRocTipoNota').textContent = det.length ? 'Esta semana ainda não tem classificação Falta/Sobra; exibindo apenas Interna × Externa.' : '';
+    }
+
+    // ---- Gráfico 2: por cliente (empilhado)
+    if (lista.length) {
+      const TOP = 8;
+      const top = lista.slice(0, TOP);
+      const resto = lista.slice(TOP);
+      const dados = top.slice();
+      if (resto.length) {
+        const dem = { cliente: `Demais (${resto.length})`, iFalta: 0, iSobra: 0, eFalta: 0, eSobra: 0, outros: 0 };
+        resto.forEach(c => { dem.iFalta += c.iFalta; dem.iSobra += c.iSobra; dem.eFalta += c.eFalta; dem.eSobra += c.eSobra; dem.outros += c.outros; });
+        dados.push(dem);
+      }
+      const series = classificado ? [
+        { label: 'Interna · Falta', data: dados.map(c => c.iFalta), color: '#E2483D' },
+        { label: 'Interna · Sobra', data: dados.map(c => c.iSobra), color: '#F5B400' },
+        { label: 'Externa · Falta', data: dados.map(c => c.eFalta), color: '#4C8CF5' },
+        { label: 'Externa · Sobra', data: dados.map(c => c.eSobra), color: '#2FAE66' },
+        ...(dados.some(c => c.outros) ? [{ label: 'Outros', data: dados.map(c => c.outros), color: '#B8BCC2' }] : []),
+      ] : [
+        { label: 'Interna', data: dados.map(c => (c.iAb || 0) + (c.iFe || 0)), color: '#E2483D' },
+        { label: 'Externa', data: dados.map(c => (c.eAb || 0) + (c.eFe || 0)), color: '#4C8CF5' },
+      ];
+      if (!classificado) { dados.forEach((c, k) => { if (c.iAb == null) { c.iAb = 0; c.iFe = 0; c.eAb = 0; c.eFe = 0; } }); series[0].data = dados.map(c => (c.iAb || 0) + (c.iFe || 0)); series[1].data = dados.map(c => (c.eAb || 0) + (c.eFe || 0)); }
+      Charts.groupedBar('flashRocClienteChart', { labels: dados.map(c => c.cliente.length > 14 ? c.cliente.slice(0, 13) + '…' : c.cliente), series, stacked: true });
+      el('flashRocClienteNota').textContent = resto.length ? `Exibindo os ${TOP} clientes com mais ROCs; os demais (${resto.length}) estão agrupados.` : '';
+    } else {
+      Charts.destroy('flashRocClienteChart');
+      el('flashRocClienteNota').textContent = 'Nenhuma ROC (interna ou externa) na semana.';
+    }
+
+    // ---- Tabela por cliente
+    if (lista.length) {
+      const soma = k => lista.reduce((s, c) => s + c[k], 0);
+      const cel = v => `<td class="num">${classificado ? int(v) : '—'}</td>`;
+      el('tblFlashRocCliente').innerHTML = `
+        <thead><tr><th>Cliente</th><th>Unidade</th><th class="num">Interna Abertas</th><th class="num">Interna Fechadas</th><th class="num">Externa Abertas</th><th class="num">Externa Fechadas</th><th class="num">Falta</th><th class="num">Sobra</th><th class="num">Outros</th><th class="num">Total</th></tr></thead>
+        <tbody>${lista.map(c => `<tr><td>${c.cliente}</td><td>${[...c.unidades].sort().join(', ') || '—'}</td><td class="num">${int(c.iAb)}</td><td class="num">${int(c.iFe)}</td><td class="num">${int(c.eAb)}</td><td class="num">${int(c.eFe)}</td>${cel(c.falta)}${cel(c.sobra)}${cel(c.outros)}<td class="num" style="font-weight:600;">${int(c.total)}</td></tr>`).join('')}
+        <tr style="font-weight:700;"><td>Total</td><td></td><td class="num">${int(soma('iAb'))}</td><td class="num">${int(soma('iFe'))}</td><td class="num">${int(soma('eAb'))}</td><td class="num">${int(soma('eFe'))}</td>${cel(soma('falta'))}${cel(soma('sobra'))}${cel(soma('outros'))}<td class="num">${int(soma('total'))}</td></tr></tbody>`;
+    } else {
+      el('tblFlashRocCliente').innerHTML = '<tbody><tr><td class="empty-msg">Nenhuma ROC (interna ou externa) na semana.</td></tr></tbody>';
+    }
+
+    // ---- Detalhe das ROCs
+    if (!det.length) {
+      el('tblFlashRocDetalhe').innerHTML = '<tbody><tr><td class="empty-msg">Nenhuma ROC (interna ou externa) na semana.</td></tr></tbody>';
+      el('flashRocNota').textContent = '';
+    } else {
+      const pillDesvio = d => d ? `<span class="pill ${d === 'Falta' ? 'red' : d === 'Sobra' ? 'amber' : 'gray'}">${d}</span>` : '—';
+      el('tblFlashRocDetalhe').innerHTML = `
+        <thead><tr><th>Nº ROC</th><th>Unidade</th><th>Cliente</th><th>Tipo</th><th>Desvio</th><th>Status</th></tr></thead>
+        <tbody>${det.map(r => `<tr><td>${r.numero}</td><td>${r.unidade || '—'}</td><td>${r.cliente}</td><td>${r.tipo}</td><td>${pillDesvio(r.desvio)}</td><td><span class="pill ${r.status === 'Fechada' ? 'green' : 'red'}">${r.status}</span></td></tr>`).join('')}</tbody>`;
+      el('flashRocNota').textContent = `${int(det.length)} registro(s) na semana selecionada`;
     }
   }
 
